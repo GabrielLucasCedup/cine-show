@@ -2373,7 +2373,7 @@ object F_register: TF_register
   end
   object txt_email: TEdit
     Left = 400
-    Top = 417
+    Top = 415
     Width = 201
     Height = 21
     TabOrder = 1
@@ -2381,7 +2381,7 @@ object F_register: TF_register
   end
   object txt_senha: TEdit
     Left = 400
-    Top = 472
+    Top = 470
     Width = 201
     Height = 21
     TabOrder = 2

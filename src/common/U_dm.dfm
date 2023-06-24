@@ -3,6 +3,13 @@ object dm: Tdm
   Height = 562
   Width = 727
   object conexao: TFDConnection
+    Params.Strings = (
+      'Port=3307'
+      'Database=sistema_cineshow'
+      'User_Name=root'
+      'Password=3307'
+      'Server=localhost'
+      'DriverID=MySQL')
     Left = 104
     Top = 64
   end
