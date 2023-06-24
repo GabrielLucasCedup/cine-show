@@ -1,0 +1,17 @@
+program sistema_streaming;
+
+uses
+  Vcl.Forms,
+  U_Login in 'pages\U_Login.pas' {F_Login},
+  U_BaseForm in 'common\U_BaseForm.pas' {BaseForm},
+  U_Register in 'pages\U_Register.pas' {F_registro};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TF_Login, F_Login);
+  Application.CreateForm(TF_registro, F_registro);
+  Application.Run;
+end.

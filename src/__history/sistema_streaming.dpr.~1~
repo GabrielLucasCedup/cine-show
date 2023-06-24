@@ -1,0 +1,14 @@
+program sistema_streaming;
+
+uses
+  Vcl.Forms,
+  U_Login in 'pages\U_Login.pas' {Form2};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+end.

@@ -1,0 +1,33 @@
+unit U_Register;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls, U_BaseForm;
+
+type
+  TF_registro = class()
+    background: TImage;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Image1: TImage;
+    Edit4: TEdit;
+    Image2: TImage;
+    Image3: TImage;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_registro: TF_registro;
+
+implementation
+
+{$R *.dfm}
+
+end.

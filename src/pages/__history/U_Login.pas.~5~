@@ -1,0 +1,47 @@
+unit U_Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Imaging.pngimage, U_BaseForm;
+
+type
+  TF_Login = class()
+    background: TImage;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Image1: TImage;
+    Image2: TImage;
+    procedure Image2Click(Sender: TObject);
+    procedure Image1MouseEnter(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_Login: TF_Login;
+
+implementation
+
+{$R *.dfm}
+
+uses U_Register;
+
+procedure TF_Login.Image1MouseEnter(Sender: TObject);
+begin
+  inherited;
+  image1.Picture.LoadFromFile('./templates/criarContaHover.png');
+end;
+
+procedure TF_Login.Image2Click(Sender: TObject);
+begin
+ visible:=false;
+ application.CreateForm(Tf_registro,f_registro);
+ f_registro.showModal;
+end;
+
+end.

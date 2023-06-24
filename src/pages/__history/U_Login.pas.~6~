@@ -1,0 +1,61 @@
+unit U_Login;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Imaging.pngimage, U_BaseForm;
+
+type
+  TF_Login = class(TBaseForm)
+    background: TImage;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    btn_entrar: TImage;
+    lb_naoPossui: TImage;
+    procedure lb_naoPossuiClick(Sender: TObject);
+    procedure btn_entrarMouseEnter(Sender: TObject);
+    procedure btn_entrarMouseLeave(Sender: TObject);
+    procedure lb_naoPossuiMouseLeave(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_Login: TF_Login;
+
+implementation
+
+{$R *.dfm}
+
+uses U_Register, U_dm;
+
+procedure TF_Login.btn_entrarMouseEnter(Sender: TObject);
+begin
+  inherited;
+  btn_entrar.Picture.LoadFromFile(dm.templates + 'entrarHover.png');
+end;
+
+procedure TF_Login.btn_entrarMouseLeave(Sender: TObject);
+begin
+  inherited;
+  btn_entrar.Picture.LoadFromFile(dm.path + 'src/templates/btn_entrar.png');
+end;
+
+procedure TF_Login.lb_naoPossuiClick(Sender: TObject);
+begin
+ visible:=false;
+ application.CreateForm(Tf_registro,f_registro);
+ f_registro.showModal;
+end;
+
+procedure TF_Login.lb_naoPossuiMouseLeave(Sender: TObject);
+begin
+  inherited;
+  lb_naoPossui.Picture.LoadFromFile(dm.path + 'src/templates/lb_naoPossui);
+end;
+
+end.

@@ -1,0 +1,55 @@
+CREATE DATABASE sistema_cineshow;
+
+CREATE TABLE sistema_cineshow.usuario(
+	id varchar(6) UNIQUE not null,
+    nome varchar(100) not null,
+	nome_exibido varchar(40),
+    email varchar(255) not null,
+    senha varchar(16) not null,
+	data_nasc date not null,
+	data_registro date not null,
+	PRIMARY KEY(id)
+);
+
+CREATE TABLE sistema_cineshow.midia(
+	id int AUTO_INCREMENT PRIMARY KEY,
+    nome_midia varchar(100) not null,
+    dir_midia text,
+	dir_capa text,
+	duracao int not null,
+	data_lancamento date not null,
+    genero_id int
+);
+
+CREATE TABLE sistema_cineshow.favoritos(
+	id int AUTO_INCREMENT PRIMARY KEY,
+    usuario_id varchar(6),
+    midia_id int
+);
+
+CREATE TABLE sistema_cineshow.generos(
+	id int AUTO_INCREMENT PRIMARY KEY,
+    nome_genero varchar(60)
+);
+
+CREATE TABLE sistema_cineshow.continuar_assistindo(
+    id int AUTO_INCREMENT PRIMARY KEY,
+    tempo_atual int not null,
+    ultimo_acesso date not null,
+    usuario_id varchar(6),
+    midia_id int
+);
+
+ALTER TABLE sistema_cineshow.midia
+	ADD FOREIGN KEY(genero_id) REFERENCES generos(id);
+
+ALTER TABLE sistema_cineshow.favoritos
+	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),
+    ADD FOREIGN KEY(midia_id) REFERENCES midia(id);
+
+ALTER TABLE sistema_cineshow.continuar_assistindo
+	RENAME TO retomar;
+
+ALTER TABLE sistema_cineshow.retomar 
+	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),
+    ADD FOREIGN KEY(midia_id) REFERENCES midia(id);
