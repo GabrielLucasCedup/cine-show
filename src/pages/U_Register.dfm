@@ -11,13 +11,14 @@ object F_register: TF_register
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
   object background: TImage
-    Left = -8
+    Left = 0
     Top = 0
-    Width = 977
-    Height = 800
+    Width = 1033
+    Height = 816
     Picture.Data = {
       0954506E67496D61676589504E470D0A1A0A0000000D49484452000004000000
       03000806000000BABA150D000000097048597300000B1300000B1301009A9C18
@@ -1116,7 +1117,7 @@ object F_register: TF_register
   end
   object btn_criar: TImage
     Left = 376
-    Top = 632
+    Top = 592
     Width = 275
     Height = 32
     Picture.Data = {
@@ -1225,8 +1226,8 @@ object F_register: TF_register
       B50000000049454E44AE426082}
   end
   object lb_conta: TImage
-    Left = 456
-    Top = 686
+    Left = 448
+    Top = 646
     Width = 137
     Height = 12
     Picture.Data = {
@@ -1259,10 +1260,11 @@ object F_register: TF_register
       17A7C9BECF5F853FB1777DA9877F935D5FFF36BC4D75F82D1E0D2B295D5EF8FF
       E51D85C94CA9FCD13184C8397F1A3BB17F517E01A9BF2A796C6C452800000000
       49454E44AE426082}
+    OnClick = lb_contaClick
   end
   object Image1: TImage
-    Left = 0
-    Top = 24
+    Left = 152
+    Top = 712
     Width = 1024
     Height = 768
     Picture.Data = {
@@ -2363,7 +2365,7 @@ object F_register: TF_register
   end
   object txt_usuario: TEdit
     Left = 400
-    Top = 377
+    Top = 353
     Width = 201
     Height = 21
     TabOrder = 0
@@ -2371,7 +2373,7 @@ object F_register: TF_register
   end
   object txt_email: TEdit
     Left = 400
-    Top = 441
+    Top = 417
     Width = 201
     Height = 21
     TabOrder = 1
@@ -2379,7 +2381,7 @@ object F_register: TF_register
   end
   object txt_senha: TEdit
     Left = 400
-    Top = 496
+    Top = 472
     Width = 201
     Height = 21
     TabOrder = 2
@@ -2387,7 +2389,7 @@ object F_register: TF_register
   end
   object txt_confirme: TEdit
     Left = 400
-    Top = 556
+    Top = 532
     Width = 201
     Height = 21
     TabOrder = 3

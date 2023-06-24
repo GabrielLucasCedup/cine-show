@@ -14,9 +14,12 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     procedure change(tform:TformClass;form: Tform);
+    procedure fecha;
   end;
 
 implementation
+
+uses U_Login;
 
 procedure TBaseForm.change(tform:TformClass;form: Tform);
 begin
@@ -37,6 +40,14 @@ begin
   inherited CreateParams(Params);
 
   Params.Style := Params.Style and not WS_MAXIMIZEBOX;
+
+end;
+
+procedure TBaseForm.fecha;
+begin
+ hide;
+ f_login.close;
+ close;
 
 end;
 

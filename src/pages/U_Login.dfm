@@ -19,7 +19,7 @@ object F_Login: TF_Login
   Position = poDesktopCenter
   Scaled = False
   PixelsPerInch = 96
-  TextHeight = 26
+  TextHeight = 22
   object background: TImage
     Left = 0
     Top = 0
@@ -1178,7 +1178,7 @@ object F_Login: TF_Login
     Left = 408
     Top = 405
     Width = 201
-    Height = 34
+    Height = 30
     TabOrder = 0
     Text = 'Email'
   end
@@ -1186,7 +1186,7 @@ object F_Login: TF_Login
     Left = 408
     Top = 464
     Width = 201
-    Height = 34
+    Height = 30
     TabOrder = 1
     Text = 'Senha'
   end

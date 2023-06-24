@@ -49,7 +49,9 @@ end;
 procedure TF_Login.lb_naoPossuiClick(Sender: TObject);
 begin
   inherited;
-  change(Tf_register,f_register);
+  hide;
+  application.CreateForm(Tf_register,f_register);
+  f_register.ShowModal;
 end;
 
 procedure TF_Login.lb_naoPossuiMouseEnter(Sender: TObject);

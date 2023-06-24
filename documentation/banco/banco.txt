@@ -32,7 +32,7 @@ CREATE TABLE sistema_cineshow.generos(
     nome_genero varchar(60)
 );
 
-CREATE TABLE sistema_cineshow.continuar_assistindo(
+CREATE TABLE sistema_cineshow.retomar(
     id int AUTO_INCREMENT PRIMARY KEY,
     tempo_atual int not null,
     ultimo_acesso date not null,
@@ -46,9 +46,6 @@ ALTER TABLE sistema_cineshow.midia
 ALTER TABLE sistema_cineshow.favoritos
 	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),
     ADD FOREIGN KEY(midia_id) REFERENCES midia(id);
-
-ALTER TABLE sistema_cineshow.continuar_assistindo
-	RENAME TO retomar;
 
 ALTER TABLE sistema_cineshow.retomar 
 	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),

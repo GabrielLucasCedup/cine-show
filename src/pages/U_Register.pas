@@ -17,6 +17,8 @@ type
     btn_criar: TImage;
     lb_conta: TImage;
     Image1: TImage;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure lb_contaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,5 +35,17 @@ implementation
 uses U_Login;
 
 
+
+procedure TF_register.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  fecha;
+end;
+
+procedure TF_register.lb_contaClick(Sender: TObject);
+begin
+  inherited;
+  change(Tf_login,f_login);
+end;
 
 end.
