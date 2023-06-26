@@ -1,0 +1,97 @@
+unit U_dm;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  FireDAC.Phys.MySQLDef, Data.DB, FireDAC.Phys.MySQL, FireDAC.Comp.Client,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
+
+type
+  Tdm = class(TDataModule)
+    conexao: TFDConnection;
+    driver: TFDPhysMySQLDriverLink;
+    QUser: TFDQuery;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+
+    // tabela USUARIO
+    procedure UserActive;
+    procedure UserDesactive;
+
+  public
+    { Public declarations }
+    var templates:string;
+    var media:string;
+
+    // tabela USUARIO
+    function Authentication(email:string;senha:string):boolean;
+    function UserFindByEmail(pesq:string):boolean;
+    function IdGeneration:string;
+
+  end;
+
+var
+  dm: Tdm;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+function Tdm.Authentication(email, senha: string): boolean;
+begin
+  UserActive;  //Ativa a query da tabela usuario
+  with QUser do
+  begin
+    SQL.Text := ('SELECT email,senha from usuario where email = :email and senha = :senha');
+    ParamByName('email').AsString := email;
+    ParamByName('senha').AsString := senha;
+    Open;
+    result:= not True;
+  end;
+  UserDesactive;
+end;
+
+procedure Tdm.DataModuleCreate(Sender: TObject);
+begin
+  templates :=  getCurrentDir + '\src\templates\';
+  media := getCurrentDir + '\midia\mp4\';
+  driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
+  conexao.Params.Database:='sistema_cineshow';
+  conexao.Params.username:='root';
+  conexao.Params.password:='3307';
+end;
+
+function Tdm.IdGeneration: string;
+var
+cadeia:string;
+begin
+   cadeia:='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+end;
+
+procedure Tdm.UserActive;
+begin
+   QUser.Active:=TRUE;
+end;
+
+procedure Tdm.UserDesactive;
+begin
+   QUser.sql.Clear;
+   QUser.sql.Text := ('SELECT * FROM USUARIO');
+   QUser.Open;
+   QUser.Active:=False;
+   QUser.Close;
+end;
+
+function Tdm.UserFindByEmail(pesq: string): boolean;
+begin
+    UserActive;  //Ativa a query da tabela usuario
+end;
+
+end.

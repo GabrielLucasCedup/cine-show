@@ -5,7 +5,8 @@ uses
   U_Login in 'pages\U_Login.pas' {F_Login},
   U_BaseForm in 'common\U_BaseForm.pas' {BaseForm},
   U_Register in 'pages\U_Register.pas' {F_register},
-  U_dm in 'common\U_dm.pas' {dm: TDataModule};
+  U_dm in 'common\U_dm.pas' {dm: TDataModule},
+  U_player in 'pages\U_player.pas' {F_player};
 
 {$R *.res}
 

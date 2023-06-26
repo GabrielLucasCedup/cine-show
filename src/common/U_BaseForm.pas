@@ -39,7 +39,8 @@ procedure TBaseForm.CreateParams(var Params: TCreateParams);
 begin
   inherited CreateParams(Params);
 
-  Params.Style := Params.Style and not WS_MAXIMIZEBOX;
+  //Params.Style := Params.Style and not WS_MAXIMIZEBOX;
+  BorderIcons:=[biSystemMenu,biMinimize];
 
 end;
 

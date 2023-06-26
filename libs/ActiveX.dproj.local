@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject>
-	<Transactions>
-    <Transaction>2023/05/31 08:21:26.000.812,=rtl.dcp</Transaction>
-    <Transaction>2023/05/31 08:21:40.000.722,=C:\Users\Noturnos\Documents\Embarcadero\Studio\20.0\Imports\WMPLib_TLB.pas</Transaction>
-    <Transaction>2023/05/31 08:21:40.000.753,=C:\Users\Noturnos\Documents\Embarcadero\Studio\20.0\Imports\WMPLib_TLB.pas</Transaction>
-    <Transaction>2023/05/31 08:21:40.000.769,=vcl.dcp</Transaction>
-  </Transactions>
-</BorlandProject>

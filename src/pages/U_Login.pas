@@ -10,8 +10,8 @@ uses
 type
   TF_Login = class(TBaseForm)
     background: TImage;
-    Edit1: TEdit;
-    Edit2: TEdit;
+    txt_email: TEdit;
+    txt_senha: TEdit;
     btn_entrar: TImage;
     lb_naoPossui: TImage;
     procedure btn_entrarMouseEnter(Sender: TObject);
@@ -19,6 +19,7 @@ type
     procedure lb_naoPossuiMouseLeave(Sender: TObject);
     procedure lb_naoPossuiMouseEnter(Sender: TObject);
     procedure lb_naoPossuiClick(Sender: TObject);
+    procedure btn_entrarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,6 +34,23 @@ implementation
 {$R *.dfm}
 
 uses U_dm, U_Register;
+
+procedure TF_Login.btn_entrarClick(Sender: TObject);
+begin
+  inherited;
+  if (length(txt_email.text) < 6) or (length(txt_senha.text) < 6) then
+    showmessage('Preencha os Campos Corretamente')
+  else begin
+     if (dm.Authentication(txt_email.Text,txt_senha.Text)) then
+     begin
+        hide;
+        application.CreateForm(Tf_register,f_register);
+        f_register.ShowModal;
+     end else
+     showmessage('Email e/ou Senha está incorreta');
+  end;
+
+end;
 
 procedure TF_Login.btn_entrarMouseEnter(Sender: TObject);
 begin

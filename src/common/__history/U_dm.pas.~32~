@@ -1,0 +1,146 @@
+unit U_dm;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  FireDAC.Phys.MySQLDef, Data.DB, FireDAC.Phys.MySQL, FireDAC.Comp.Client,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
+  FireDAC.Comp.DataSet;
+
+type
+  Tdm = class(TDataModule)
+    conexao: TFDConnection;
+    driver: TFDPhysMySQLDriverLink;
+    QUser: TFDQuery;
+    procedure DataModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+
+    // tabela USUARIO
+    procedure UserActive;
+    procedure UserDesactive;
+    function IdGeneration:string;
+
+  public
+    { Public declarations }
+    var templates:string;
+    var media:string;
+
+    // CONTAS
+    function Authentication(email:string;senha:string):boolean;
+    procedure CreateUser(usuario,email,senha:string);
+
+    // tabela USUARIO
+    function UserFindByEmail(pesq:string):boolean;
+    function UserFindById(pesq:string):boolean;
+
+
+  end;
+
+var
+  dm: Tdm;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+function Tdm.Authentication(email, senha: string): boolean;
+begin
+  UserActive;  //Ativa a query da tabela usuario
+  with QUser do
+  begin
+    SQL.Text := ('SELECT email,senha from usuario where email = :email and senha = :senha');
+    ParamByName('email').AsString := email;
+    ParamByName('senha').AsString := senha;
+    Open;
+    result:= not True;
+  end;
+  UserDesactive;
+end;
+
+procedure Tdm.CreateUser(usuario, email, senha: string);
+begin
+  UserActive;
+  with QUser do
+  begin
+    SQL.Text:= 'INSERT ';
+  end;
+end;
+
+procedure Tdm.DataModuleCreate(Sender: TObject);
+begin
+  templates :=  getCurrentDir + '\src\templates\';
+  media := getCurrentDir + '\midia\mp4\';
+  driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
+  conexao.Params.Database:='sistema_cineshow';
+  conexao.Params.username:='root';
+  conexao.Params.password:='3307';
+ // media:=IdGeneration;
+end;
+
+function Tdm.IdGeneration: string;
+var
+i:integer;
+cadeia,newId:string;
+condicional:boolean;
+begin
+   randomize;
+   cadeia:='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   condicional:=true;
+   newId:='';
+   repeat
+
+      for i:=1 to 6 do
+      begin
+         newId:=newId+ cadeia[ random(length(cadeia)) + 1];
+      end;
+
+   until not UserFindById(newId);
+
+   result:=newId;
+
+end;
+
+procedure Tdm.UserActive;
+begin
+   QUser.Active:=TRUE;
+end;
+
+procedure Tdm.UserDesactive;
+begin
+   QUser.sql.Text := ('SELECT NOME FROM USUARIO');
+   QUser.Open;
+   QUser.Active:=False;
+   QUser.Close;
+end;
+
+function Tdm.UserFindByEmail(pesq: string): boolean;
+begin
+    UserActive;  //Ativa a query da tabela usuario
+end;
+
+function Tdm.UserFindById(pesq: string): boolean;
+begin
+
+  if length(pesq) <> 6  then
+    result:=false
+  else begin
+     UserActive;
+     with QUser do
+     begin
+       SQL.Text:= ('SELECT ID FROM USUARIO WHERE ID = :pesq');
+       ParamByName('pesq').AsString:=pesq;
+       Open;
+       result:= not IsEmpty;
+     end;
+     UserDesactive;
+  end;
+
+end;
+
+end.
