@@ -50,3 +50,12 @@ ALTER TABLE sistema_cineshow.favoritos
 ALTER TABLE sistema_cineshow.retomar 
 	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),
     ADD FOREIGN KEY(midia_id) REFERENCES midia(id);
+
+ALTER TABLE midia MODIFY duracao VARCHAR(10);
+
+
+
+insert into generos values (default,'Ação'),(default,'Romance'),(default,'Aventura'),(default,'Comédia'),(default,'Anime'),(default,'Suspense');
+insert into midia values 
+(default,'Avatar: O Caminho da Água','avatar.mp4','avatar.png','00:02:27','2022-12-15',1),
+(default,'Super Mario Bros','mario.mp4','mario.png','00:02:26','2023-04-06',3);

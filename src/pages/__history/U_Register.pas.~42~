@@ -1,0 +1,188 @@
+unit U_Register;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls, U_BaseForm, Vcl.Mask;
+
+type
+  TF_register = class(TBaseForm)
+    txt_usuario: TEdit;
+    txt_email: TEdit;
+    image1: TImage;
+    MaskEdit1: TMaskEdit;
+    background: TImage;
+    lock: TImage;
+    lock2: TImage;
+    btn_criar: TImage;
+    lb_conta: TImage;
+    MaskEdit2: TMaskEdit;
+    MaskEdit3: TMaskEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    procedure lb_contaClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure lockMouseEnter(Sender: TObject);
+    procedure lockMouseLeave(Sender: TObject);
+    procedure lock2MouseEnter(Sender: TObject);
+    procedure lock2MouseLeave(Sender: TObject);
+    procedure lockClick(Sender: TObject);
+    procedure lock2Click(Sender: TObject);
+    procedure btn_criarMouseEnter(Sender: TObject);
+    procedure btn_criarMouseLeave(Sender: TObject);
+    procedure lb_contaMouseEnter(Sender: TObject);
+    procedure lb_contaMouseLeave(Sender: TObject);
+    procedure btn_criarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    function LockEnter(lock1:boolean):string;
+    function LockLeave(lock1:boolean):string;
+  end;
+
+var
+  F_register: TF_register;
+  lock2Imagem: Boolean=True;
+  lockImagem: Boolean=True;
+
+implementation
+
+{$R *.dfm}
+
+uses U_Login,U_dm;
+
+
+
+
+
+procedure TF_register.btn_criarClick(Sender: TObject);
+var
+strDate:string;
+begin
+  inherited;
+  strDate:=maskedit1.text;
+  showmessage(inttostr(length(strDate)));
+
+
+
+
+end;
+
+procedure TF_register.btn_criarMouseEnter(Sender: TObject);
+begin
+  inherited;
+  btn_criar.Picture.LoadFromFile(dm.templates+'criarContaHover.png')
+end;
+
+procedure TF_register.btn_criarMouseLeave(Sender: TObject);
+begin
+  inherited;
+  btn_criar.Picture.LoadFromFile(dm.templates+'btn_criarConta.png');
+end;
+
+procedure TF_register.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  fecha;
+end;
+
+procedure TF_register.lb_contaClick(Sender: TObject);
+begin
+  inherited;
+  change(Tf_login,f_login);
+end;
+
+
+
+procedure TF_register.lb_contaMouseEnter(Sender: TObject);
+begin
+  inherited;
+  lb_conta.Picture.LoadFromFile(dm.templates+'possuiContaHover.png')
+end;
+
+procedure TF_register.lb_contaMouseLeave(Sender: TObject);
+begin
+  inherited;
+  lb_conta.Picture.LoadFromFile(dm.templates+'lb_possuiConta.png')
+end;
+
+procedure TF_register.lock2Click(Sender: TObject);
+begin
+  inherited;
+  if lock2Imagem then
+  begin
+    lock2Imagem:=false;
+    lock.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+    maskEdit3.PasswordChar:=#0;
+  end else begin
+     lock2Imagem:=true;
+    lock.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+    maskEdit3.PasswordChar:='*';
+  end;
+end;
+
+procedure TF_register.lock2MouseEnter(Sender: TObject);
+begin
+  inherited;
+  lock2.Picture.LoadFromFile(dm.templates+LockEnter(lock2Imagem));
+end;
+
+procedure TF_register.lock2MouseLeave(Sender: TObject);
+begin
+  inherited;
+  lock2.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+end;
+
+procedure TF_register.lockClick(Sender: TObject);
+begin
+  inherited;
+  if lockImagem then
+  begin
+    lockImagem:=false;
+    lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+    maskEdit2.PasswordChar:=#0;
+  end else begin
+     lockImagem:=true;
+    lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+     maskEdit2.PasswordChar:='*';
+  end;
+end;
+
+function TF_register.LockEnter(lock1: boolean): string;
+begin
+  if lock1 then
+  result:='mostrarSenhaHover.png'
+  else
+  result:='ocultarSenhaHover.png'
+end;
+
+function TF_register.LockLeave(lock1: boolean): string;
+begin
+  if lock1 then
+  result:='btn_mostrarSenha.png'
+  else
+  result:='btn_ocultarSenha.png'
+end;
+
+procedure TF_register.lockMouseEnter(Sender: TObject);
+begin
+  inherited;
+  lock.Picture.LoadFromFile(dm.templates+LockEnter(lockImagem));
+end;
+
+procedure TF_register.lockMouseLeave(Sender: TObject);
+begin
+  inherited;
+  lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+end;
+
+
+
+end.
+

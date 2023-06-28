@@ -15,6 +15,8 @@ type
     conexao: TFDConnection;
     driver: TFDPhysMySQLDriverLink;
     QUser: TFDQuery;
+    QMedia: TFDQuery;
+    QRetomar: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -24,10 +26,19 @@ type
     procedure UserDesactive;
     function IdGeneration:string;
 
+    // tabela MIDIA
+    procedure MediaActive;
+    procedure MediaDesactive;
+
+    // tabela RETOMAR
+    procedure RetomarActive;
+    procedure RetomarDesactive;
+
   public
     { Public declarations }
     var templates:string;
     var media:string;
+    var capa:string;
 
     // CONTAS
     function Authentication(email:string;senha:string):boolean;
@@ -37,6 +48,11 @@ type
     function UserFindByEmail(pesq:string):boolean;
     function UserFindById(pesq:string):boolean;
 
+    // tabela MIDIA
+    function MediaFindByName(pesq:string):boolean;
+
+    // tabela RETOMAR
+    function RetomarCount():integer;
 
   end;
 
@@ -55,10 +71,10 @@ begin
   with QUser do
   begin
     SQL.Text := ('SELECT email,senha from usuario where email = :email and senha = :senha');
-    ParamByName('email').AsString := email;
-    ParamByName('senha').AsString := senha;
+    ParamByName('email').AsString := lowercase(email);
+    ParamByName('senha').AsString := lowercase(senha);
     Open;
-    result:= not True;
+    result:= not IsEmpty;
   end;
   UserDesactive;
 end;
@@ -69,22 +85,25 @@ id:string;
 begin
   UserActive;
   id:=IdGeneration;
-  with QUser do
-  begin
-    SQL.Text:= 'INSERT INTO USUARIO VALUES (:id,:usuario,:usuario,:email,:senha,:nasc,:reg)';
-    ParamByName('id').AsString:=id;
-    ParamByName('usuario').AsString:=usuario;
-    ParamByName('email').AsString:=email;
-    ParamByName('senha').AsString:=senha;
-    ParamByName('nasc').AsDate:=StrToDate(nasc);
-    ParamByName('reg').AsDate:=StrToDate(nasc);
-  end;
+    with QUser do
+    begin
+      SQL.Text:= 'INSERT INTO USUARIO VALUES (:id,:usuario,:usuario,:email,:senha,:nasc,:reg)';
+      ParamByName('id').AsString:=id;
+      ParamByName('usuario').AsString:=lowercase(usuario);
+      ParamByName('email').AsString:=lowercase(email);
+      ParamByName('senha').AsString:=lowercase(senha);
+      ParamByName('nasc').AsDate:=StrToDate(nasc);
+      ParamByName('reg').AsDate:=Date;
+      execute;
+    end;
+  UserDesactive;
 end;
 
 procedure Tdm.DataModuleCreate(Sender: TObject);
 begin
   templates :=  getCurrentDir + '\src\templates\';
   media := getCurrentDir + '\midia\mp4\';
+  capa := getCurrentDir + '\midia\capa\';
   driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
   conexao.Params.Database:='sistema_cineshow';
   conexao.Params.username:='root';
@@ -114,6 +133,59 @@ begin
 
 end;
 
+procedure Tdm.MediaActive;
+begin
+ QMedia.Active:=true;
+end;
+
+procedure Tdm.MediaDesactive;
+begin
+   QMedia.sql.Text := ('SELECT nome_midia FROM midia');
+   QMedia.Open;
+   QMedia.Active:=False;
+   QMedia.Close;
+end;
+
+function Tdm.MediaFindByName(pesq: string): boolean;
+begin
+  MediaActive;
+  with QMEDIA do
+  begin
+    SQL.Text:='SELECT NOME_MEDIA FROM MIDIA WHERE ID = :pesq';
+    ParamByName('pesq').AsString:=pesq;
+    open;
+    result:= not IsEmpty;         //TRUE se encontrou FALSE se nao encontrou
+  end;
+end;
+
+procedure Tdm.RetomarActive;
+begin
+ QRetomar.Active:=true;
+end;
+
+function Tdm.RetomarCount: integer;
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+     sql.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR';
+     open;
+     if not IsEmpty then
+     result:=Fields[0].AsInteger
+     else
+     result:=0;
+  end;
+  RetomarDesactive;
+end;
+
+procedure Tdm.RetomarDesactive;
+begin
+   QUser.sql.Text := ('SELECT midia_id FROM retomar');
+   QUser.Open;
+   QUser.Active:=False;
+   QUser.Close;
+end;
+
 procedure Tdm.UserActive;
 begin
    QUser.Active:=TRUE;
@@ -129,7 +201,15 @@ end;
 
 function Tdm.UserFindByEmail(pesq: string): boolean;
 begin
-    UserActive;  //Ativa a query da tabela usuario
+    UserActive;
+     with QUser do
+     begin
+       SQL.Text:= ('SELECT EMAIL FROM USUARIO WHERE EMAIL = :pesq');
+       ParamByName('pesq').AsString:=lowercase(pesq);
+       Open;
+       result:= not IsEmpty;
+     end;
+     UserDesactive;
 end;
 
 function Tdm.UserFindById(pesq: string): boolean;

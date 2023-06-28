@@ -1,0 +1,26 @@
+unit U_Home;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_BaseForm;
+
+type
+  TF_PaginaPrincipal = class(TBaseForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_PaginaPrincipal: TF_PaginaPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+uses U_dm;
+
+end.
