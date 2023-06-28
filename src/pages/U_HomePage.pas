@@ -15,12 +15,12 @@ type
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    Label1: TLabel;
     Image4: TImage;
     Image5: TImage;
     Image6: TImage;
     Image7: TImage;
     procedure FormCreate(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     function CountColumn:integer;
@@ -46,13 +46,32 @@ implementation
 uses U_dm;
 
 
-procedure TF_HomePage.FormCreate(Sender: TObject);
+procedure TF_HomePage.FormActivate(Sender: TObject);
 var
 filme:TImage;
 titulo:TLabel;
 i,counts:integer;
 begin
+  inherited;
 
+// ----------- MONTANDO TELA -------------
+  counts:=DM.RetomarCount;
+//  counts:=1;
+  for I := 1 to counts do
+  begin
+    if i = 1 then
+    begin
+      CriaLabel('Continuar Assistindo',titulo);
+    end;
+    CriaImagem('',filme);
+  end;
+
+
+
+end;
+
+procedure TF_HomePage.FormCreate(Sender: TObject);
+begin
   menu.Top:=0;
   menu.Left:=0;
   footer.top:=702;
@@ -61,20 +80,6 @@ begin
   scroll.left:=0;
 
   scroll.Parent:=F_homepage;
-
-
-// ----------- MONTANDO TELA -------------
-  counts:=DM.RetomarCount;
-  for I := 1 to counts do
-  begin
-    lengthImagem:=i;
-
-    if i = counts then
-    begin
-      CriaLabel('Continuar Assistindo',titulo);
-    end;
-  end;
-
 
 end; //fecha onCreate
 
@@ -104,6 +109,7 @@ begin
   Olabel.left:=(scroll.Width div 2)-(Olabel.Width div 2);
   lengthLabel:=lengthLabel+1;
   elementoIsLabel:=true;
+  showmessage(inttostr(OLabel.Top));
 end;
 
 // ----------- FUNÇÕES EXTRAS ----------

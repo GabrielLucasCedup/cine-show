@@ -50,9 +50,10 @@ type
 
     // tabela MIDIA
     function MediaFindByName(pesq:string):boolean;
+    //function MediaGetRecentes:TClass;
 
     // tabela RETOMAR
-    function RetomarCount():integer;
+    function RetomarCount:integer;
 
   end;
 
@@ -107,7 +108,7 @@ begin
   driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
   conexao.Params.Database:='sistema_cineshow';
   conexao.Params.username:='root';
-  conexao.Params.password:='3307';
+  conexao.Params.password:='';
 end;
 
 function Tdm.IdGeneration: string;
@@ -168,6 +169,7 @@ begin
   RetomarActive;
   with QRetomar do
   begin
+     Active:=true;
      sql.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR';
      open;
      if not IsEmpty then

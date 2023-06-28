@@ -11,6 +11,7 @@ object F_HomePage: TF_HomePage
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnActivate = FormActivate
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -782,6 +783,8 @@ object F_HomePage: TF_HomePage
     Width = 1024
     Height = 631
     Align = alCustom
+    Color = clBtnFace
+    ParentColor = False
     TabOrder = 0
     object Image1: TImage
       Left = 360
@@ -800,19 +803,6 @@ object F_HomePage: TF_HomePage
       Top = 92
       Width = 299
       Height = 155
-    end
-    object Label1: TLabel
-      Left = 408
-      Top = 40
-      Width = 190
-      Height = 25
-      Caption = 'Continuar Assistindo'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -21
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
     end
     object Image7: TImage
       Left = 360

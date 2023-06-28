@@ -5,10 +5,8 @@ object dm: Tdm
   Width = 727
   object conexao: TFDConnection
     Params.Strings = (
-      'Port=3307'
       'Database=sistema_cineshow'
       'User_Name=root'
-      'Password=3307'
       'Server=localhost'
       'DriverID=MySQL')
     Connected = True
@@ -17,8 +15,8 @@ object dm: Tdm
   end
   object driver: TFDPhysMySQLDriverLink
     VendorLib = 
-      'E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGen' +
-      'erico\cine-show\libs\libmySQL.dll'
+      'C:\353\lucasLessa gabrielRodrigues\cine-show-main\libs\libmySQL.' +
+      'dll'
     Left = 176
     Top = 136
   end
@@ -37,6 +35,7 @@ object dm: Tdm
     Top = 232
   end
   object QRetomar: TFDQuery
+    Active = True
     Connection = conexao
     SQL.Strings = (
       'select midia_id from retomar')

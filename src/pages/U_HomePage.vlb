@@ -13,9 +13,6 @@ Coordinates=316,10,48,58
 [Image4]
 Coordinates=77,10,57,58
 
-[Label1]
-Coordinates=101,146,53,58
-
 [Scroll]
 Coordinates=314,146,47,36
 
@@ -38,6 +35,6 @@ Coordinates=267,78,57,58
 Coordinates=231,146,73,58
 
 []
-Coordinates=144,10,57,58
+Coordinates=101,146,53,58
 Visible=True
 
