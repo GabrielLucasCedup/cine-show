@@ -26,15 +26,17 @@
     <Transaction>2023/06/21 08:18:13.000.136,C:\353\lucasLessa gabrielRodrigues\SistemaGenerico\src\Unit1.pas=C:\353\lucasLessa gabrielRodrigues\SistemaGenerico\src\common\U_dm.pas</Transaction>
     <Transaction>2023/06/21 08:18:13.000.136,C:\353\lucasLessa gabrielRodrigues\SistemaGenerico\src\Unit1.dfm=C:\353\lucasLessa gabrielRodrigues\SistemaGenerico\src\common\U_dm.dfm</Transaction>
     <Transaction>2023/06/24 20:37:09.000.986,=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
-    <Transaction>2023/06/24 20:38:59.000.357,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_player.dfm=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.dfm</Transaction>
     <Transaction>2023/06/24 20:38:59.000.357,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_player.pas=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
+    <Transaction>2023/06/24 20:38:59.000.357,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_player.dfm=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.dfm</Transaction>
     <Transaction>2023/06/25 14:34:08.000.742,=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
     <Transaction>2023/06/27 19:16:20.000.769,=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
-    <Transaction>2023/06/27 19:18:10.000.610,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_Home.dfm=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.dfm</Transaction>
     <Transaction>2023/06/27 19:18:10.000.610,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_Home.pas=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
+    <Transaction>2023/06/27 19:18:10.000.610,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_Home.dfm=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.dfm</Transaction>
     <Transaction>2023/06/27 19:21:21.000.955,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_Home.pas=</Transaction>
     <Transaction>2023/06/27 19:36:59.000.640,=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
     <Transaction>2023/06/27 19:38:03.000.817,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_HomePage.dfm=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.dfm</Transaction>
     <Transaction>2023/06/27 19:38:03.000.817,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\pages\U_HomePage.pas=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
+    <Transaction>2023/06/28 19:34:56.608,=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
+    <Transaction>2023/06/28 21:03:28.015,E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\common\U_MediaClass.pas=E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGenerico\cine-show\src\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

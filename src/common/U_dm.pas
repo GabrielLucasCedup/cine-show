@@ -106,9 +106,10 @@ begin
   media := getCurrentDir + '\midia\mp4\';
   capa := getCurrentDir + '\midia\capa\';
   driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
+  conexao.Connected:=true;
   conexao.Params.Database:='sistema_cineshow';
   conexao.Params.username:='root';
-  conexao.Params.password:='';
+  conexao.Params.password:='3307';
 end;
 
 function Tdm.IdGeneration: string;

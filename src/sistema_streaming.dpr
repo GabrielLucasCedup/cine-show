@@ -1,5 +1,4 @@
 program sistema_streaming;
-
 uses
   Vcl.Forms,
   U_Login in 'pages\U_Login.pas' {F_Login},
@@ -7,10 +6,10 @@ uses
   U_Register in 'pages\U_Register.pas' {F_register},
   U_dm in 'common\U_dm.pas' {dm: TDataModule},
   U_player in 'pages\U_player.pas' {F_player},
-  U_HomePage in 'pages\U_HomePage.pas' {F_HomePage};
+  U_HomePage in 'pages\U_HomePage.pas' {F_HomePage},
+  U_MediaClass in 'common\U_MediaClass.pas';
 
 {$R *.res}
-
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
