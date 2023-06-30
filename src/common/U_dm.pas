@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   FireDAC.Phys.MySQLDef, Data.DB, FireDAC.Phys.MySQL, FireDAC.Comp.Client,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, U_MediaClass,System.Generics.Collections,vcl.Dialogs;
 
 type
   Tdm = class(TDataModule)
@@ -50,7 +50,7 @@ type
 
     // tabela MIDIA
     function MediaFindByName(pesq:string):boolean;
-    //function MediaGetRecentes:TClass;
+    function MediaSelectRecentes:TObjectList<TMedia>;
 
     // tabela RETOMAR
     function RetomarCount:integer;
@@ -158,6 +158,35 @@ begin
     open;
     result:= not IsEmpty;         //TRUE se encontrou FALSE se nao encontrou
   end;
+end;
+
+function Tdm.MediaSelectRecentes: TObjectList<TMedia>;
+var
+OList:TObjectList<TMedia>;
+begin
+  Olist:= TObjectList<TMedia>.Create;
+  MediaActive;
+  with QMedia do
+  begin
+    SQL.Text:= 'SELECT id FROM MIDIA WHERE YEAR(DATA_LANCAMENTO) = YEAR(CURDATE())';
+    OPEN;
+    if IsEmpty then
+    begin
+      Result:=Olist;
+      exit
+    end;
+
+    First;
+    while not EOF do
+    begin
+      showmessage('sexo');
+      Olist.Add(TMedia.create(fieldByName('id').AsString));
+      next;
+    end;
+
+  end;
+  MediaDesactive;
+  result:=Olist;
 end;
 
 procedure Tdm.RetomarActive;

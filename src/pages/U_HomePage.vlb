@@ -1,17 +1,8 @@
 ﻿[dm.QMedia]
 Coordinates=10,146,81,58
 
-[Image2]
-Coordinates=66,78,57,58
-
-[Image6]
-Coordinates=334,78,57,58
-
 [footer]
 Coordinates=316,10,48,58
-
-[Image4]
-Coordinates=77,10,57,58
 
 [Scroll]
 Coordinates=314,146,47,36
@@ -19,22 +10,13 @@ Coordinates=314,146,47,36
 [menu]
 Coordinates=10,78,46,58
 
-[Image5]
-Coordinates=133,78,57,58
-
-[Image1]
-Coordinates=200,78,57,58
-
 [dm.QRetomar]
 Coordinates=211,10,95,58
-
-[Image3]
-Coordinates=267,78,57,58
 
 [dm.QUser]
 Coordinates=231,146,73,58
 
 []
-Coordinates=101,146,53,58
+Coordinates=77,10,57,58
 Visible=True
 

@@ -5,20 +5,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_BaseForm, Vcl.Imaging.pngimage,
-  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, Vcl.StdCtrls;
+  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, Vcl.StdCtrls,System.Generics.Collections;
 
 type
   TF_HomePage = class(TBaseForm)
     Scroll: TScrollBox;
     menu: TImage;
     footer: TImage;
-    Image1: TImage;
-    Image2: TImage;
-    Image3: TImage;
-    Image4: TImage;
-    Image5: TImage;
-    Image6: TImage;
-    Image7: TImage;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
   private
@@ -43,11 +36,13 @@ implementation
 
 {$R *.dfm}
 
-uses U_dm;
+uses U_dm, U_MediaClass;
 
 
 procedure TF_HomePage.FormActivate(Sender: TObject);
 var
+List:TObjectList<TMedia>;
+item:Tmedia;
 filme:TImage;
 titulo:TLabel;
 i,counts:integer;
@@ -56,7 +51,7 @@ begin
 
 // ----------- MONTANDO TELA -------------
   counts:=DM.RetomarCount;
-//  counts:=1;
+
   for I := 1 to counts do
   begin
     if i = 1 then
@@ -65,6 +60,16 @@ begin
     end;
     CriaImagem('',filme);
   end;
+
+  try
+  List := dm.MediaSelectRecentes;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+  //ShowMessage(inttostr(List.Count));
+  for item in List do
+  showmessage(item.GetNome);
 
 
 
@@ -112,7 +117,7 @@ begin
   showmessage(inttostr(OLabel.Top));
 end;
 
-// ----------- FUNÇÕES EXTRAS ----------
+// ----------- FUNÇÕES EXTRAS -----------
 
 function TF_HomePage.Alinha(isLabel: boolean): integer;
 var

@@ -759,56 +759,14 @@ object F_HomePage: TF_HomePage
       000000000000400920000000000000A004100000000000005002080000000000
       002801FF07F24EF3A252E2A3280000000049454E44AE426082}
   end
-  object Image4: TImage
-    Left = 24
-    Top = 100
-    Width = 299
-    Height = 155
-  end
-  object Image5: TImage
-    Left = 368
-    Top = 100
-    Width = 299
-    Height = 155
-  end
-  object Image6: TImage
-    Left = 712
-    Top = 100
-    Width = 299
-    Height = 155
-  end
   object Scroll: TScrollBox
     Left = 0
-    Top = 71
+    Top = 70
     Width = 1024
-    Height = 631
+    Height = 634
     Align = alCustom
     Color = clBtnFace
     ParentColor = False
     TabOrder = 0
-    object Image1: TImage
-      Left = 360
-      Top = 92
-      Width = 299
-      Height = 155
-    end
-    object Image2: TImage
-      Left = 704
-      Top = 92
-      Width = 299
-      Height = 155
-    end
-    object Image3: TImage
-      Left = 16
-      Top = 92
-      Width = 299
-      Height = 155
-    end
-    object Image7: TImage
-      Left = 360
-      Top = 276
-      Width = 299
-      Height = 155
-    end
   end
 end
