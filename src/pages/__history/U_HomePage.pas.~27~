@@ -67,10 +67,10 @@ begin
     on E: Exception do
       ShowMessage('Erro: ' + E.Message);
   end;
+  //ShowMessage(inttostr(List.Count));
   for item in List do
-  begin
-    showmessage(item.GetNome);
-  end;
+  showmessage(item.GetNome);
+
 
 
 end;

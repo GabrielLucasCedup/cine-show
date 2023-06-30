@@ -66,31 +66,9 @@ implementation
 
 {$R *.dfm}
 
-// ------------- EVENT CREATE -------------------------------------------
-
-
-
-procedure Tdm.DataModuleCreate(Sender: TObject);
-begin
-  templates :=  getCurrentDir + '\src\templates\';
-  media := getCurrentDir + '\midia\mp4\';
-  capa := getCurrentDir + '\midia\capa\';
-  driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
-  conexao.Connected:=true;
-  conexao.Params.Database:='sistema_cineshow';
-  conexao.Params.username:='root';
-  conexao.Params.password:='3307';
-end;
-
-
-
-// -------------- CONTAS -------------------------------------------------
-
-
-
 function Tdm.Authentication(email, senha: string): boolean;
 begin
-  UserActive;
+  UserActive;  //Ativa a query da tabela usuario
   with QUser do
   begin
     SQL.Text := ('SELECT email,senha from usuario where email = :email and senha = :senha');
@@ -122,55 +100,16 @@ begin
   UserDesactive;
 end;
 
-
-
-// -------------- USUARIO ------------------------------------------------
-
-
-
-procedure Tdm.UserActive;
+procedure Tdm.DataModuleCreate(Sender: TObject);
 begin
-   QUser.Active:=TRUE;
-end;
-
-procedure Tdm.UserDesactive;
-begin
-   QUser.sql.Text := ('SELECT NOME FROM USUARIO');
-   QUser.Open;
-   QUser.Active:=False;
-   QUser.Close;
-end;
-
-function Tdm.UserFindByEmail(pesq: string): boolean;
-begin
-    UserActive;
-     with QUser do
-     begin
-       SQL.Text:= ('SELECT EMAIL FROM USUARIO WHERE EMAIL = :pesq');
-       ParamByName('pesq').AsString:=lowercase(pesq);
-       Open;
-       result:= not IsEmpty;
-     end;
-     UserDesactive;
-end;
-
-function Tdm.UserFindById(pesq: string): boolean;
-begin
-
-  if length(pesq) <> 6  then
-    result:=false
-  else begin
-     UserActive;
-     with QUser do
-     begin
-       SQL.Text:= ('SELECT ID FROM USUARIO WHERE ID = :pesq');
-       ParamByName('pesq').AsString:=pesq;
-       Open;
-       result:= not IsEmpty;
-     end;
-     UserDesactive;
-  end;
-
+  templates :=  getCurrentDir + '\src\templates\';
+  media := getCurrentDir + '\midia\mp4\';
+  capa := getCurrentDir + '\midia\capa\';
+  driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
+  conexao.Connected:=true;
+  conexao.Params.Database:='sistema_cineshow';
+  conexao.Params.username:='root';
+  conexao.Params.password:='3307';
 end;
 
 function Tdm.IdGeneration: string;
@@ -193,13 +132,8 @@ begin
    until not UserFindById(newId);
 
    result:=newId;
+
 end;
-
-
-
-// ----------- MEDIA ---------------------------------------------------
-
-
 
 procedure Tdm.MediaActive;
 begin
@@ -245,6 +179,7 @@ begin
     First;
     while not EOF do
     begin
+      showmessage('sexo');
       Olist.Add(TMedia.create(fieldByName('id').AsString));
       next;
     end;
@@ -253,12 +188,6 @@ begin
   MediaDesactive;
   result:=Olist;
 end;
-
-
-
-// ---------- RETOMAR -----------------------------------------------------
-
-
 
 procedure Tdm.RetomarActive;
 begin
@@ -287,6 +216,51 @@ begin
    QUser.Open;
    QUser.Active:=False;
    QUser.Close;
+end;
+
+procedure Tdm.UserActive;
+begin
+   QUser.Active:=TRUE;
+end;
+
+procedure Tdm.UserDesactive;
+begin
+   QUser.sql.Text := ('SELECT NOME FROM USUARIO');
+   QUser.Open;
+   QUser.Active:=False;
+   QUser.Close;
+end;
+
+function Tdm.UserFindByEmail(pesq: string): boolean;
+begin
+    UserActive;
+     with QUser do
+     begin
+       SQL.Text:= ('SELECT EMAIL FROM USUARIO WHERE EMAIL = :pesq');
+       ParamByName('pesq').AsString:=lowercase(pesq);
+       Open;
+       result:= not IsEmpty;
+     end;
+     UserDesactive;
+end;
+
+function Tdm.UserFindById(pesq: string): boolean;
+begin
+
+  if length(pesq) <> 6  then
+    result:=false
+  else begin
+     UserActive;
+     with QUser do
+     begin
+       SQL.Text:= ('SELECT ID FROM USUARIO WHERE ID = :pesq');
+       ParamByName('pesq').AsString:=pesq;
+       Open;
+       result:= not IsEmpty;
+     end;
+     UserDesactive;
+  end;
+
 end;
 
 end.

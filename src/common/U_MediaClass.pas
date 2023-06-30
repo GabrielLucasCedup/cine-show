@@ -94,16 +94,18 @@ begin
 
   FQuery:= TFDQuery.Create(dm);
   FQuery.Connection:= dm.conexao;
+  FQuery.SQL.Text:= 'SELECT id FROM MIDIA';
+
   if id <> 'null' then
   begin
-
-    with dm.QMedia do
+    with FQuery do
     begin
       Active:=true;
-      sql.Text:= 'SELECT nome_midia,dir_midia,dir_capa,duracao,' +
-      'data_lancamento,genero_id FROM MIDIA WHERE ID = :pesq';
 
+      SQL.Text:= 'SELECT nome_midia,dir_midia,dir_capa,duracao,' +
+      'data_lancamento,genero_id FROM MIDIA WHERE ID = :pesq';
       parambyname('pesq').AsString:=id;
+
       OPEN;
       FIRST;
       if not IsEmpty then

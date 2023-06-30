@@ -8,13 +8,15 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   FireDAC.Phys.MySQLDef, Data.DB, FireDAC.Phys.MySQL, FireDAC.Comp.Client,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet;
+  FireDAC.Comp.DataSet, U_MediaClass,System.Generics.Collections,vcl.Dialogs;
 
 type
   Tdm = class(TDataModule)
     conexao: TFDConnection;
     driver: TFDPhysMySQLDriverLink;
     QUser: TFDQuery;
+    QMedia: TFDQuery;
+    QRetomar: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -24,10 +26,19 @@ type
     procedure UserDesactive;
     function IdGeneration:string;
 
+    // tabela MIDIA
+    procedure MediaActive;
+    procedure MediaDesactive;
+
+    // tabela RETOMAR
+    procedure RetomarActive;
+    procedure RetomarDesactive;
+
   public
     { Public declarations }
     var templates:string;
     var media:string;
+    var capa:string;
 
     // CONTAS
     function Authentication(email:string;senha:string):boolean;
@@ -37,6 +48,12 @@ type
     function UserFindByEmail(pesq:string):boolean;
     function UserFindById(pesq:string):boolean;
 
+    // tabela MIDIA
+    function MediaFindByName(pesq:string):boolean;
+    function MediaSelectRecentes:TObjectList<TMedia>;
+
+    // tabela RETOMAR
+    function RetomarCount:integer;
 
   end;
 
@@ -87,7 +104,9 @@ procedure Tdm.DataModuleCreate(Sender: TObject);
 begin
   templates :=  getCurrentDir + '\src\templates\';
   media := getCurrentDir + '\midia\mp4\';
+  capa := getCurrentDir + '\midia\capa\';
   driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
+  conexao.Connected:=true;
   conexao.Params.Database:='sistema_cineshow';
   conexao.Params.username:='root';
   conexao.Params.password:='3307';
@@ -114,6 +133,89 @@ begin
 
    result:=newId;
 
+end;
+
+procedure Tdm.MediaActive;
+begin
+ QMedia.Active:=true;
+end;
+
+procedure Tdm.MediaDesactive;
+begin
+   QMedia.sql.Text := ('SELECT nome_midia FROM midia');
+   QMedia.Open;
+   QMedia.Active:=False;
+   QMedia.Close;
+end;
+
+function Tdm.MediaFindByName(pesq: string): boolean;
+begin
+  MediaActive;
+  with QMEDIA do
+  begin
+    SQL.Text:='SELECT NOME_MEDIA FROM MIDIA WHERE ID = :pesq';
+    ParamByName('pesq').AsString:=pesq;
+    open;
+    result:= not IsEmpty;         //TRUE se encontrou FALSE se nao encontrou
+  end;
+end;
+
+function Tdm.MediaSelectRecentes: TObjectList<TMedia>;
+var
+OList:TObjectList<TMedia>;
+begin
+  Olist:= TObjectList<TMedia>.Create;
+  MediaActive;
+  with QMedia do
+  begin
+    //SQL.Text:= 'SELECT id FROM MIDIA WHERE YEAR(DATA_LANCAMENTO) = YEAR(CURDATE())';
+    SQL.Text:= 'SELECT id FROM MIDIA';
+    OPEN;
+    if IsEmpty then
+    begin
+      Result:=Olist;
+      exit
+    end;
+
+    First;
+    while not EOF do
+    begin
+      Olist.Add(TMedia.create(fieldByName('id').AsString));
+      next;
+    end;
+
+  end;
+  MediaDesactive;
+  result:=Olist;
+end;
+
+procedure Tdm.RetomarActive;
+begin
+ QRetomar.Active:=true;
+end;
+
+function Tdm.RetomarCount: integer;
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+     Active:=true;
+     sql.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR';
+     open;
+     if not IsEmpty then
+     result:=Fields[0].AsInteger
+     else
+     result:=0;
+  end;
+  RetomarDesactive;
+end;
+
+procedure Tdm.RetomarDesactive;
+begin
+   QUser.sql.Text := ('SELECT midia_id FROM retomar');
+   QUser.Open;
+   QUser.Active:=False;
+   QUser.Close;
 end;
 
 procedure Tdm.UserActive;

@@ -2,7 +2,7 @@ unit U_MediaClass;
 
 interface
 uses
-  FireDAC.Comp.Client,Vcl.Dialogs;
+  FireDAC.Comp.Client,vcl.Dialogs,System.SysUtils;
 type
   TMedia = class
     private
@@ -17,6 +17,8 @@ type
       FGeneroid   : string;
 
     public
+      procedure Desactive;
+
       constructor create(id:string='null');
       // SETTER
       procedure SetId(arg:string);
@@ -89,14 +91,22 @@ constructor TMedia.create(id: string);
 var
 i:integer;
 begin
+
+  FQuery:= TFDQuery.Create(dm);
+  FQuery.Connection:= dm.conexao;
+  FQuery.SQL.Text:= 'SELECT id FROM MIDIA';
+
   if id <> 'null' then
   begin
-    dm.MediaActive;
-    with dm.QMedia do
+     ShowMessage('antes');
+    with FQuery do
     begin
+      Active:=true;
+      ShowMessage('Depois');
 
-      sql.Text:= 'SELECT :campos FROM MIDIA WHERE ID = :pesq';
-      parambyname('campos').AsString:='nome_midia,dir_midia,dir_capa,duracao,data_lancamento,genero_id';
+      sql.Text:= 'SELECT nome_midia,dir_midia,dir_capa,duracao,' +
+      'data_lancamento,genero_id FROM MIDIA WHERE ID = :pesq';
+
       parambyname('pesq').AsString:=id;
       OPEN;
       FIRST;
@@ -106,13 +116,21 @@ begin
         FDirMP4:=fieldByName('dir_midia').AsString;
         FDirCapa:=fieldByName('dir_capa').AsString;
         FDuracao:=fieldByName('duracao').AsString;
-        FLancamento:=fieldByName('data_lacamento').AsString;
+        FLancamento:=fieldByName('data_lancamento').AsString;
         FGeneroId:=fieldByName('genero_id').AsString;
       end;
 
     end;
-    dm.MediaDesactive;
   end;
+  Desactive;
+end;
+
+procedure TMedia.Desactive;
+begin
+  FQuery.SQL.Text:='SELECT id FROM MIDIA';
+  FQuery.Open;
+  FQuery.Active:=false;
+  FQuery.Close;
 end;
 
 function TMedia.GetCapa: string;
