@@ -1,0 +1,45 @@
+unit U_HomePage;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_BaseForm, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls, System.ImageList, Vcl.ImgList;
+
+type
+  TF_HomePage = class(TBaseForm)
+    Scroll: TScrollBox;
+    menu: TImage;
+    footer: TImage;
+    List1: TScrollBox;
+    procedure FormCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_HomePage: TF_HomePage;
+
+implementation
+
+{$R *.dfm}
+
+procedure TF_HomePage.FormCreate(Sender: TObject);
+begin
+
+  menu.Top:=0;
+  menu.Left:=0;
+  footer.top:=702;
+  footer.Left:=0;
+  scroll.Top:=71;
+  scroll.left:=0;
+
+  scroll.Parent:=F_homepage;
+  List1.Left:= (width div 2)-(List1.Width div 2);
+
+end;
+
+end.
