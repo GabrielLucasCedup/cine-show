@@ -1,12 +1,9 @@
 unit U_Login;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.Imaging.pngimage, U_BaseForm, Vcl.Mask;
-
 type
   TF_Login = class(TBaseForm)  //class(TBaseForm)
     background: TImage;
@@ -32,17 +29,12 @@ type
   public
     { Public declarations }
   end;
-
 var
   F_Login: TF_Login;
   lockImagem:boolean=true;
-
 implementation
-
 {$R *.dfm}
-
 uses U_dm, U_Register, U_HomePage;
-
 procedure TF_Login.btn_entrarClick(Sender: TObject);
 begin
   inherited;
@@ -55,21 +47,17 @@ begin
      end else
      showmessage('Email e/ou Senha está incorreta');
   end;
-
 end;
-
 procedure TF_Login.btn_entrarMouseEnter(Sender: TObject);
 begin
   inherited;
   btn_entrar.Picture.LoadFromFile(dm.templates + 'entrarHover.png');
 end;
-
 procedure TF_Login.btn_entrarMouseLeave(Sender: TObject);
 begin
   inherited;
   btn_entrar.Picture.LoadFromFile(dm.templates + 'btn_entrar.png');
 end;
-
 procedure TF_Login.FormActivate(sender: TObject);
 begin
   //showmessage('Active');
@@ -82,19 +70,16 @@ begin
   application.CreateForm(Tf_register,f_register);
   f_register.ShowModal;
 end;
-
 procedure TF_Login.lb_naoPossuiMouseEnter(Sender: TObject);
 begin
   inherited;
   lb_naoPossui.Picture.LoadFromFile(dm.templates + 'naoPossuiHover.png');
 end;
-
 procedure TF_Login.lb_naoPossuiMouseLeave(Sender: TObject);
 begin
   inherited;
   lb_naoPossui.Picture.LoadFromFile(dm.templates + 'lb_naoPossuiConta.png');
 end;
-
 procedure TF_Login.lockClick(Sender: TObject);
 begin
   inherited;
@@ -109,17 +94,14 @@ begin
      txt_senha.PasswordChar:='*';
   end;
 end;
-
 procedure TF_Login.lockMouseEnter(Sender: TObject);
 begin
   inherited;
   lock.Picture.LoadFromFile(dm.templates+F_Register.LockEnter(lockImagem));
 end;
-
 procedure TF_Login.lockMouseLeave(Sender: TObject);
 begin
   inherited;
   lock.Picture.LoadFromFile(dm.templates+F_Register.LockLeave(lockImagem));
 end;
-
 end.

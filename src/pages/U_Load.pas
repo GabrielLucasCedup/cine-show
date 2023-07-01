@@ -46,7 +46,7 @@ end;
 
 procedure TF_Load.changeLoader;
 begin
-  loader.Picture.LoadFromFile(dm.templates + '\loader2\' + inttostr(i) + '.png');
+  loader.Picture.LoadFromFile(dm.templates + '\loader\' + inttostr(i) + '.png');
   if i = 21 then
   i:=1;
   i:=i+1;
@@ -92,7 +92,7 @@ begin
 
     if J = 20 then
     begin
-      alinhaLabel('Bem Vindo '+);
+      alinhaLabel('Bem Vindo '+dm.UserExibe);
     end;
 
   end;

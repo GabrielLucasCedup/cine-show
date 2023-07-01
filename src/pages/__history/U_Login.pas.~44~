@@ -8,7 +8,7 @@ uses
   Vcl.Imaging.pngimage, U_BaseForm, Vcl.Mask;
 
 type
-  TF_Login = class()
+  TF_Login = class(TBaseForm)  //class(TBaseForm)
     background: TImage;
     txt_email: TEdit;
     btn_entrar: TImage;
@@ -17,6 +17,7 @@ type
     txt_senha: TMaskEdit;
     Label5: TLabel;
     Label2: TLabel;
+    procedure FormActivate(sender:TObject);
     procedure btn_entrarMouseEnter(Sender: TObject);
     procedure btn_entrarMouseLeave(Sender: TObject);
     procedure lb_naoPossuiMouseLeave(Sender: TObject);
@@ -40,7 +41,7 @@ implementation
 
 {$R *.dfm}
 
-uses U_dm, U_Register;
+uses U_dm, U_Register, U_HomePage;
 
 procedure TF_Login.btn_entrarClick(Sender: TObject);
 begin
@@ -50,9 +51,7 @@ begin
   else begin
      if (dm.Authentication(txt_email.Text,txt_senha.Text)) then
      begin
-        hide;
-        application.CreateForm(Tf_register,f_register);
-        f_register.ShowModal;
+        change(TF_HomePage,F_HomePage);
      end else
      showmessage('Email e/ou Senha está incorreta');
   end;
@@ -69,6 +68,11 @@ procedure TF_Login.btn_entrarMouseLeave(Sender: TObject);
 begin
   inherited;
   btn_entrar.Picture.LoadFromFile(dm.templates + 'btn_entrar.png');
+end;
+
+procedure TF_Login.FormActivate(sender: TObject);
+begin
+  //showmessage('Active');
 end;
 
 procedure TF_Login.lb_naoPossuiClick(Sender: TObject);
