@@ -2197,8 +2197,8 @@ object F_register: TF_register
     OnMouseLeave = lockMouseLeave
   end
   object lock2: TImage
-    Left = 616
-    Top = 543
+    Left = 618
+    Top = 545
     Width = 25
     Height = 25
     Picture.Data = {

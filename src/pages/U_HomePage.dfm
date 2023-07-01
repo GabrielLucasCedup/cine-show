@@ -1,7 +1,7 @@
 object F_HomePage: TF_HomePage
   Left = 0
   Top = 0
-  Caption = 'F_HomePage'
+  Caption = 'CineShow'
   ClientHeight = 768
   ClientWidth = 1024
   Color = clBtnFace

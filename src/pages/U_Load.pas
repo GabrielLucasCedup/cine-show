@@ -109,12 +109,12 @@ begin
     if J = 1 then
     begin
       application.CreateForm(TF_HomePage,F_HomePage);
-      alinhaLabel('Carregando os dados...');
+      alinhaLabel('Criando conta...');
     end;
 
     if J = 10 then
     begin
-      alinhaLabel('Carregamento concluído!');
+      alinhaLabel('Sua conta está pronta!');
     end;
 
     if J = 12 then

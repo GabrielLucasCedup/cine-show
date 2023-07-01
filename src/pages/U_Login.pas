@@ -54,7 +54,7 @@ end;
 procedure TF_Login.btn_entrarMouseEnter(Sender: TObject);
 begin
   inherited;
-  btn_entrar.Picture.LoadFromFile(dm.templates + 'entrarHover.png');
+  btn_entrar.Picture.LoadFromFile(dm.hover + 'btn_entrar.png');
 end;
 procedure TF_Login.btn_entrarMouseLeave(Sender: TObject);
 begin
@@ -76,7 +76,7 @@ end;
 procedure TF_Login.lb_naoPossuiMouseEnter(Sender: TObject);
 begin
   inherited;
-  lb_naoPossui.Picture.LoadFromFile(dm.templates + 'naoPossuiHover.png');
+  lb_naoPossui.Picture.LoadFromFile(dm.hover + 'lb_naoPossuiConta.png');
 end;
 procedure TF_Login.lb_naoPossuiMouseLeave(Sender: TObject);
 begin
@@ -89,22 +89,22 @@ begin
   if lockImagem then
   begin
     lockImagem:=false;
-    lock.Picture.LoadFromFile(dm.templates+F_Register.LockLeave(lockImagem));
+    lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
     txt_senha.PasswordChar:=#0;
   end else begin
      lockImagem:=true;
-    lock.Picture.LoadFromFile(dm.templates+F_Register.LockLeave(lockImagem));
+    lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
      txt_senha.PasswordChar:='*';
   end;
 end;
 procedure TF_Login.lockMouseEnter(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.templates+F_Register.LockEnter(lockImagem));
+  lock.Picture.LoadFromFile(dm.hover+F_Register.LockKey(lockImagem));
 end;
 procedure TF_Login.lockMouseLeave(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.templates+F_Register.LockLeave(lockImagem));
+  lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
 end;
 end.

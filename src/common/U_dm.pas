@@ -126,12 +126,13 @@ var
 id:string;
 begin
   UserActive;
-  id:=IdGeneration;
+  UserID:=IdGeneration;
+  UserExibe:=TransformExibe(usuario);
     with QUser do
     begin
       SQL.Text:= 'INSERT INTO USUARIO VALUES (:id,:usuario,:usuario,:email,:senha,:nasc,:reg)';
-      ParamByName('id').AsString:=id;
-      ParamByName('usuario').AsString:=lowercase(usuario);
+      ParamByName('id').AsString:=UserID;
+      ParamByName('usuario').AsString:=lowercase(UserExibe);
       ParamByName('email').AsString:=lowercase(email);
       ParamByName('senha').AsString:=lowercase(senha);
       ParamByName('nasc').AsDate:=StrToDate(nasc);

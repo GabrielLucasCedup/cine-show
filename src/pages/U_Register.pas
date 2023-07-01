@@ -43,8 +43,7 @@ type
     function dateValidation(data:string):boolean;
   public
     { Public declarations }
-    function LockEnter(lock1:boolean):string;
-    function LockLeave(lock1:boolean):string;
+    function LockKey(isShow:boolean):string;
   end;
 
 var
@@ -59,8 +58,6 @@ implementation
 {$R *.dfm}
 
 uses U_Login,U_dm, U_Load;
-
-
 
 
 
@@ -126,7 +123,7 @@ end;
 procedure TF_register.btn_criarMouseEnter(Sender: TObject);
 begin
   inherited;
-  btn_criar.Picture.LoadFromFile(dm.templates+'criarContaHover.png')
+  btn_criar.Picture.LoadFromFile(dm.hover+'btn_criarConta.png')
 end;
 
 procedure TF_register.btn_criarMouseLeave(Sender: TObject);
@@ -152,7 +149,7 @@ end;
 procedure TF_register.lb_contaMouseEnter(Sender: TObject);
 begin
   inherited;
-  lb_conta.Picture.LoadFromFile(dm.templates+'possuiContaHover.png')
+  lb_conta.Picture.LoadFromFile(dm.hover+'lb_possuiConta.png')
 end;
 
 procedure TF_register.lb_contaMouseLeave(Sender: TObject);
@@ -167,11 +164,11 @@ begin
   if lock2Imagem then
   begin
     lock2Imagem:=false;
-    lock.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+    lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
     maskEdit3.PasswordChar:=#0;
   end else begin
      lock2Imagem:=true;
-    lock.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+    lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
     maskEdit3.PasswordChar:='*';
   end;
 end;
@@ -179,13 +176,13 @@ end;
 procedure TF_register.lock2MouseEnter(Sender: TObject);
 begin
   inherited;
-  lock2.Picture.LoadFromFile(dm.templates+LockEnter(lock2Imagem));
+  lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
 end;
 
 procedure TF_register.lock2MouseLeave(Sender: TObject);
 begin
   inherited;
-  lock2.Picture.LoadFromFile(dm.templates+LockLeave(lock2Imagem));
+  lock2.Picture.LoadFromFile(dm.templates+LockKey(lock2Imagem));
 end;
 
 procedure TF_register.lockClick(Sender: TObject);
@@ -194,26 +191,18 @@ begin
   if lockImagem then
   begin
     lockImagem:=false;
-    lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+    lock.Picture.LoadFromFile(dm.hover+LockKey(lockImagem));
     maskEdit2.PasswordChar:=#0;
   end else begin
      lockImagem:=true;
-    lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+    lock.Picture.LoadFromFile(dm.hover+LockKey(lockImagem));
      maskEdit2.PasswordChar:='*';
   end;
 end;
 
-function TF_register.LockEnter(lock1: boolean): string;
+function TF_register.LockKey(isShow: boolean): string;
 begin
-  if lock1 then
-  result:='mostrarSenhaHover.png'
-  else
-  result:='ocultarSenhaHover.png'
-end;
-
-function TF_register.LockLeave(lock1: boolean): string;
-begin
-  if lock1 then
+  if isShow then
   result:='btn_mostrarSenha.png'
   else
   result:='btn_ocultarSenha.png'
@@ -222,13 +211,13 @@ end;
 procedure TF_register.lockMouseEnter(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.templates+LockEnter(lockImagem));
+  lock.Picture.LoadFromFile(dm.hover+Lockkey(lockImagem));
 end;
 
 procedure TF_register.lockMouseLeave(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.templates+LockLeave(lockImagem));
+  lock.Picture.LoadFromFile(dm.templates+LockKey(lockImagem));
 end;
 
 
