@@ -20,6 +20,7 @@ type
       procedure Desactive;
 
       constructor create(id:string='null');
+      destructor destroy; override;
       // SETTER
       procedure SetId(arg:string);
       procedure SetNome(arg:string);
@@ -129,6 +130,12 @@ begin
   FQuery.Open;
   FQuery.Active:=false;
   FQuery.Close;
+end;
+
+destructor TMedia.destroy;
+begin
+  inherited;
+  FQuery.Free;
 end;
 
 function TMedia.GetCapa: string;

@@ -36,9 +36,18 @@ type
 
   public
     { Public declarations }
-    var templates:string;
-    var media:string;
-    var capa:string;
+    var
+    UserID:string;
+    UserExibe:string;
+
+    //LOAD
+    LoadOption:integer;
+
+    // PATH
+    templates:string;
+    media:string;
+    capa:string;
+
 
     // CONTAS
     function Authentication(email:string;senha:string):boolean;
@@ -53,7 +62,8 @@ type
     function MediaSelectRecentes:TObjectList<TMedia>;
 
     // tabela RETOMAR
-    function RetomarCount:integer;
+    function RetomarCount(idUsuario:string):integer;
+    function RetomarSelectAll(idUsuario:string):TObjectList<TMedia>;
 
   end;
 
@@ -93,10 +103,16 @@ begin
   UserActive;
   with QUser do
   begin
-    SQL.Text := ('SELECT email,senha from usuario where email = :email and senha = :senha');
+    SQL.Text := ('SELECT id,nome_exibido from usuario where email = :email and senha = :senha');
     ParamByName('email').AsString := lowercase(email);
     ParamByName('senha').AsString := lowercase(senha);
-    Open;
+    OPEN;
+    FIRST;
+    if not IsEmpty then
+    begin
+      UserID:=Fields[0].AsString;
+      UserExibe:=Fields[0].AsString;
+    end;
     result:= not IsEmpty;
   end;
   UserDesactive;
@@ -119,6 +135,7 @@ begin
       ParamByName('reg').AsDate:=Date;
       execute;
     end;
+
   UserDesactive;
 end;
 
@@ -265,14 +282,15 @@ begin
  QRetomar.Active:=true;
 end;
 
-function Tdm.RetomarCount: integer;
+function Tdm.RetomarCount(idUsuario:String): integer;
 begin
   RetomarActive;
   with QRetomar do
   begin
      Active:=true;
-     sql.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR';
-     open;
+     SQL.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR WHERE USUARIO_ID = :pesq';
+     ParamByName('pesq').AsString:=idUsuario;
+     OPEN;
      if not IsEmpty then
      result:=Fields[0].AsInteger
      else
@@ -287,6 +305,11 @@ begin
    QUser.Open;
    QUser.Active:=False;
    QUser.Close;
+end;
+
+function Tdm.RetomarSelectAll(idUsuario: string): TObjectList<TMedia>;
+begin
+ //sexo
 end;
 
 end.

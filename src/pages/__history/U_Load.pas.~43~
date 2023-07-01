@@ -1,0 +1,73 @@
+unit U_Load;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.pngimage,
+  Vcl.StdCtrls;
+
+type
+  TF_Load = class(TForm)
+    loader: TImage;
+    timer: TTimer;
+    desc: TLabel;
+    logo: TImage;
+    procedure FormActivate(Sender: TObject);
+    procedure timerTimer(Sender: TObject);
+    procedure changeLoader;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  F_Load: TF_Load;
+  i:integer=1;
+
+implementation
+
+{$R *.dfm}
+
+uses U_dm;
+
+procedure TF_Load.changeLoader;
+begin
+  loader.Picture.LoadFromFile(dm.templates + '\loader2\' + inttostr(i) + '.png');
+  if i = 21 then
+  i:=0;
+  i:=i+1;
+end;
+
+procedure TF_Load.FormActivate(Sender: TObject);
+begin
+  CLIENTHEIGHT:=300;
+  CLIENTWIDTH:=400;
+
+  desc.Caption:=dm.loadMessage;
+  desc.Left:=(width div 2)-(desc.Width div 2);
+  desc.top:=(height div 2)-(desc.height div 2)-(height div 5);
+  {
+  bg.Top:=0;
+  bg.left:=0;
+  bg.Height:=300;
+  bg.Width:=400;
+  bg.Picture.LoadFromFile(dm.templates+'bg-loading.png');   }
+
+  loader.height:=55;
+  loader.Width:=55;
+  loader.left:=(width div 2)-(loader.Width div 2);
+  loader.Top:=(height div 2)-(loader.Height div 2);
+
+  logo.Top:=255;
+  logo.Left:=(width div 2)-(logo.Width div 2);
+
+end;
+
+procedure TF_Load.timerTimer(Sender: TObject);
+begin
+ changeLoader;
+end;
+
+end.

@@ -7,13 +7,13 @@ uses
   U_dm in 'common\U_dm.pas' {dm: TDataModule},
   U_player in 'pages\U_player.pas' {F_player},
   U_HomePage in 'pages\U_HomePage.pas' {F_HomePage},
-  U_MediaClass in 'common\U_MediaClass.pas';
+  U_MediaClass in 'common\U_MediaClass.pas',
+  U_Load in 'pages\U_Load.pas' {F_Load};
 
 {$R *.res}
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TF_HomePage, F_HomePage);
   Application.CreateForm(TF_Login, F_Login);
   Application.CreateForm(Tdm, dm);
   Application.Run;

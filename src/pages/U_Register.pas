@@ -52,6 +52,8 @@ var
   lock2Imagem: Boolean=True;
   lockImagem: Boolean=True;
 
+  rEMAIL,rSENHA:string;
+
 implementation
 
 {$R *.dfm}
@@ -113,6 +115,10 @@ begin
 
   dm.CreateUser(txt_usuario.text,txt_email.text,maskedit2.Text,maskedit1.Text);
   showmessage('Sua conta foi criada com sucesso!');
+  rEMAIL:=lowercase(txt_email.text);
+  rSENHA:=lowercase(maskedit2.text);
+  change(TF_Login,F_Login);
+
 
 end;
 

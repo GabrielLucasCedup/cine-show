@@ -50,7 +50,7 @@ begin
   inherited;
 
 // ----------- MONTANDO TELA -------------
-  counts:=DM.RetomarCount;
+  counts:=DM.RetomarCount(dm.UserID);
 
   for I := 1 to counts do
   begin
@@ -58,6 +58,7 @@ begin
     begin
       CriaLabel('Continuar Assistindo',titulo);
     end;
+
     CriaImagem('',filme);
   end;
 
@@ -67,10 +68,7 @@ begin
     on E: Exception do
       ShowMessage('Erro: ' + E.Message);
   end;
-  for item in List do
-  begin
-    showmessage(item.GetNome);
-  end;
+
 
 
 end;
