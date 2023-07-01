@@ -47,11 +47,13 @@ type
     templates:string;
     media:string;
     capa:string;
+    hover:string;
 
 
     // CONTAS
     function Authentication(email:string;senha:string):boolean;
     procedure CreateUser(usuario,email,senha,nasc:string);
+    function TransformExibe(nome:string):string;
 
     // tabela USUARIO
     function UserFindByEmail(pesq:string):boolean;
@@ -83,6 +85,7 @@ implementation
 procedure Tdm.DataModuleCreate(Sender: TObject);
 begin
   templates :=  getCurrentDir + '\src\templates\';
+  hover:=templates+'hover\';
   media := getCurrentDir + '\midia\mp4\';
   capa := getCurrentDir + '\midia\capa\';
   driver.VendorLib:= getCurrentDir + '\libs\libmySQL.dll';
@@ -111,7 +114,7 @@ begin
     if not IsEmpty then
     begin
       UserID:=Fields[0].AsString;
-      UserExibe:=Fields[0].AsString;
+      UserExibe:=transformExibe(Fields[1].AsString);
     end;
     result:= not IsEmpty;
   end;
@@ -139,6 +142,24 @@ begin
   UserDesactive;
 end;
 
+function Tdm.TransformExibe(nome: string): string;
+var
+i:integer;
+str:string;
+begin
+  str:='';
+  for i:=1 to length(nome) do
+  begin
+    if i = 1 then
+    str:=str+Uppercase(nome[i])
+    else
+    if nome[i-1] = ' ' then
+    str:=str+Uppercase(nome[i])
+    else
+    str:=str+lowercase(nome[i]);
+  end;
+  result:=str;
+end;
 
 
 // -------------- USUARIO ------------------------------------------------
@@ -311,5 +332,6 @@ function Tdm.RetomarSelectAll(idUsuario: string): TObjectList<TMedia>;
 begin
  //sexo
 end;
+
 
 end.

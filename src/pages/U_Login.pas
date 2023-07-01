@@ -14,7 +14,7 @@ type
     txt_senha: TMaskEdit;
     Label5: TLabel;
     Label2: TLabel;
-    procedure FormActivate(sender:TObject);
+    //procedure FormActivate(sender:TObject);
     procedure btn_entrarMouseEnter(Sender: TObject);
     procedure btn_entrarMouseLeave(Sender: TObject);
     procedure lb_naoPossuiMouseLeave(Sender: TObject);
@@ -32,9 +32,11 @@ type
 var
   F_Login: TF_Login;
   lockImagem:boolean=true;
+
 implementation
 {$R *.dfm}
-uses U_dm, U_Register, U_HomePage;
+uses U_dm, U_Register, U_HomePage, U_Load;
+
 procedure TF_Login.btn_entrarClick(Sender: TObject);
 begin
   inherited;
@@ -43,7 +45,8 @@ begin
   else begin
      if (dm.Authentication(txt_email.Text,txt_senha.Text)) then
      begin
-        change(TF_HomePage,F_HomePage);
+        dm.LoadOption:=1;
+        change(TF_Load,F_Load);
      end else
      showmessage('Email e/ou Senha está incorreta');
   end;
@@ -58,10 +61,10 @@ begin
   inherited;
   btn_entrar.Picture.LoadFromFile(dm.templates + 'btn_entrar.png');
 end;
-procedure TF_Login.FormActivate(sender: TObject);
+{procedure TF_Login.FormActivate(sender: TObject);
 begin
   //showmessage('Active');
-end;
+end; }
 
 procedure TF_Login.lb_naoPossuiClick(Sender: TObject);
 begin

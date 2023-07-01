@@ -35,7 +35,7 @@ implementation
 
 {$R *.dfm}
 
-uses U_dm;
+uses U_dm, U_HomePage;
 
 procedure TF_Load.alinhaLabel(titulo: string);
 begin
@@ -77,6 +77,7 @@ begin
   begin
     if J = 1 then
     begin
+      application.CreateForm(TF_HomePage,F_HomePage);
       alinhaLabel('Carregando os dados...');
     end;
 
@@ -95,6 +96,43 @@ begin
       alinhaLabel('Bem Vindo '+dm.UserExibe);
     end;
 
+    if J = 26 then
+    begin
+      hide;
+      F_HomePage.showModal;
+      Close;
+    end;
+
+  end else
+  if dm.LoadOption = 2 then
+  begin
+    if J = 1 then
+    begin
+      application.CreateForm(TF_HomePage,F_HomePage);
+      alinhaLabel('Carregando os dados...');
+    end;
+
+    if J = 10 then
+    begin
+      alinhaLabel('Carregamento concluído!');
+    end;
+
+    if J = 12 then
+    begin
+      alinhaLabel('Entrando...');
+    end;
+
+    if J = 20 then
+    begin
+      alinhaLabel('Bem Vindo '+dm.UserExibe);
+    end;
+
+    if J = 26 then
+    begin
+      hide;
+      F_HomePage.showModal;
+      Close;
+    end;
   end;
 
 end;

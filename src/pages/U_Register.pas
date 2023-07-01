@@ -58,7 +58,7 @@ implementation
 
 {$R *.dfm}
 
-uses U_Login,U_dm;
+uses U_Login,U_dm, U_Load;
 
 
 
@@ -117,7 +117,8 @@ begin
   showmessage('Sua conta foi criada com sucesso!');
   rEMAIL:=lowercase(txt_email.text);
   rSENHA:=lowercase(maskedit2.text);
-  change(TF_Login,F_Login);
+  dm.LoadOption:=2;
+  change(TF_Load,F_Load);
 
 
 end;

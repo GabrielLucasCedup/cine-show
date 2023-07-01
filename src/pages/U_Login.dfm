@@ -18,7 +18,6 @@ object F_Login: TF_Login
   OldCreateOrder = False
   Position = poDesktopCenter
   Scaled = False
-  OnActivate = FormActivate
   PixelsPerInch = 96
   TextHeight = 22
   object background: TImage
