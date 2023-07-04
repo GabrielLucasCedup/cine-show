@@ -2456,9 +2456,9 @@ object F_register: TF_register
   object MaskEdit1: TMaskEdit
     Left = 392
     Top = 446
-    Width = 220
+    Width = 218
     Height = 21
-    EditMask = '00/00/0000'
+    EditMask = '99/99/9999;1;_'
     MaxLength = 10
     ParentShowHint = False
     ShowHint = True

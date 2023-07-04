@@ -14,7 +14,8 @@ type
     txt_senha: TMaskEdit;
     Label5: TLabel;
     Label2: TLabel;
-    //procedure FormActivate(sender:TObject);
+    check: TCheckBox;
+    Timer1: TTimer;
     procedure btn_entrarMouseEnter(Sender: TObject);
     procedure btn_entrarMouseLeave(Sender: TObject);
     procedure lb_naoPossuiMouseLeave(Sender: TObject);
@@ -24,10 +25,14 @@ type
     procedure lockClick(Sender: TObject);
     procedure lockMouseEnter(Sender: TObject);
     procedure lockMouseLeave(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
+
   public
     { Public declarations }
+
   end;
 var
   F_Login: TF_Login;
@@ -37,6 +42,8 @@ implementation
 {$R *.dfm}
 uses U_dm, U_Register, U_HomePage, U_Load;
 
+
+
 procedure TF_Login.btn_entrarClick(Sender: TObject);
 begin
   inherited;
@@ -45,6 +52,8 @@ begin
   else begin
      if (dm.Authentication(txt_email.Text,txt_senha.Text)) then
      begin
+        if check.State = cbChecked then
+        dm.Remember;
         dm.LoadOption:=1;
         change(TF_Load,F_Load);
      end else
@@ -61,17 +70,22 @@ begin
   inherited;
   btn_entrar.Picture.LoadFromFile(dm.templates + 'btn_entrar.png');
 end;
-{procedure TF_Login.FormActivate(sender: TObject);
+
+
+
+procedure TF_Login.FormActivate(Sender: TObject);
 begin
-  //showmessage('Active');
-end; }
+  inherited;
+  if dm.IsRemember then
+  begin
+    Timer1.Enabled:=true;
+  end;
+end;
 
 procedure TF_Login.lb_naoPossuiClick(Sender: TObject);
 begin
   inherited;
-  hide;
-  application.CreateForm(Tf_register,f_register);
-  f_register.ShowModal;
+  change(TF_Register,F_Register);
 end;
 procedure TF_Login.lb_naoPossuiMouseEnter(Sender: TObject);
 begin
@@ -89,22 +103,35 @@ begin
   if lockImagem then
   begin
     lockImagem:=false;
-    lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
+    lock.Picture.LoadFromFile(dm.templates+ dm.LockKey(lockImagem));
     txt_senha.PasswordChar:=#0;
   end else begin
      lockImagem:=true;
-    lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
+    lock.Picture.LoadFromFile(dm.templates+ dm.LockKey(lockImagem));
      txt_senha.PasswordChar:='*';
   end;
 end;
 procedure TF_Login.lockMouseEnter(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.hover+F_Register.LockKey(lockImagem));
+  lock.Picture.LoadFromFile(dm.hover+ dm.LockKey(lockImagem));
 end;
 procedure TF_Login.lockMouseLeave(Sender: TObject);
 begin
   inherited;
-  lock.Picture.LoadFromFile(dm.templates+F_Register.LockKey(lockImagem));
+  lock.Picture.LoadFromFile(dm.templates+ dm.LockKey(lockImagem));
 end;
+
+
+
+procedure TF_Login.Timer1Timer(Sender: TObject);
+begin
+  inherited;
+
+  Timer1.Enabled:=false;
+  dm.LoadOption:=3;
+  change(TF_Load,F_Load);
+
+end;
+
 end.

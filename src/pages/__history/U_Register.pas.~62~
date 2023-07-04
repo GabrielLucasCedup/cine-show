@@ -1,0 +1,254 @@
+unit U_Register;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  Vcl.ExtCtrls, U_BaseForm, Vcl.Mask;
+
+type
+  TF_register = class(TBaseForm) //class(TBaseForm)
+    txt_usuario: TEdit;
+    txt_email: TEdit;
+    image1: TImage;
+    MaskEdit1: TMaskEdit;
+    background: TImage;
+    lock: TImage;
+    lock2: TImage;
+    btn_criar: TImage;
+    lb_conta: TImage;
+    MaskEdit2: TMaskEdit;
+    MaskEdit3: TMaskEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    procedure lb_contaClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure lockMouseEnter(Sender: TObject);
+    procedure lockMouseLeave(Sender: TObject);
+    procedure lock2MouseEnter(Sender: TObject);
+    procedure lock2MouseLeave(Sender: TObject);
+    procedure lockClick(Sender: TObject);
+    procedure lock2Click(Sender: TObject);
+    procedure btn_criarMouseEnter(Sender: TObject);
+    procedure btn_criarMouseLeave(Sender: TObject);
+    procedure lb_contaMouseEnter(Sender: TObject);
+    procedure lb_contaMouseLeave(Sender: TObject);
+    procedure btn_criarClick(Sender: TObject);
+  private
+    { Private declarations }
+    function dateValidation(data:string):boolean;
+  public
+    { Public declarations }
+    function LockKey(isShow:boolean):string;
+  end;
+
+var
+  F_register: TF_register;
+  lock2Imagem: Boolean=True;
+  lockImagem: Boolean=True;
+
+  rEMAIL,rSENHA:string;
+
+implementation
+
+{$R *.dfm}
+
+uses U_Login,U_dm, U_Load;
+
+
+
+procedure TF_register.btn_criarClick(Sender: TObject);
+var
+i:integer;
+begin
+  inherited;
+
+  for I := 0 to ComponentCount -1 do
+  begin
+    if (components[i] is TEdit) then
+    begin
+      if TEdit(components[i]).Text = '' then
+      begin
+        showmessage('Preencha os campos corretamente');
+        exit
+      end;
+    end;
+  end;
+
+  if not(DateValidation(maskEdit1.text)) then
+  begin
+    showmessage('Essa data não esta válida');
+    exit
+  end;
+
+  if (length(MaskEdit2.Text)<6) then
+  begin
+    showmessage('A senha precisa ter no minimo 6 caracteres');
+    exit
+  end else
+  if (length(MaskEdit2.Text)>16) then
+  begin
+    showmessage('A senha pode ter no maximo 16 caracteres');
+    exit
+  end;
+
+  if not(lowercase(MaskEdit2.text) = lowercase(MaskEdit3.text)) then
+  begin
+    showmessage('Erro em confirmar a senha');
+    exit
+  end;
+
+  if dm.UserFindByEmail(txt_email.text) then
+  begin
+     showmessage('Já tem uma conta cadastrada com esse Email'+#13+'se já tiver uma conta clique em `Já possui uma conta?`');
+     exit
+  end;
+
+  // ------------------------------------
+
+  dm.CreateUser(txt_usuario.text,txt_email.text,maskedit2.Text,maskedit1.Text);
+  showmessage('Sua conta foi criada com sucesso!');
+  rEMAIL:=lowercase(txt_email.text);
+  rSENHA:=lowercase(maskedit2.text);
+  dm.LoadOption:=2;
+  change(TF_Load,F_Load);
+
+
+end;
+
+procedure TF_register.btn_criarMouseEnter(Sender: TObject);
+begin
+  inherited;
+  btn_criar.Picture.LoadFromFile(dm.hover+'btn_criarConta.png')
+end;
+
+procedure TF_register.btn_criarMouseLeave(Sender: TObject);
+begin
+  inherited;
+  btn_criar.Picture.LoadFromFile(dm.templates+'btn_criarConta.png');
+end;
+
+procedure TF_register.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+  fecha;
+end;
+
+procedure TF_register.lb_contaClick(Sender: TObject);
+begin
+  inherited;
+  change(Tf_login,f_login);
+end;
+
+
+
+procedure TF_register.lb_contaMouseEnter(Sender: TObject);
+begin
+  inherited;
+  lb_conta.Picture.LoadFromFile(dm.hover+'lb_possuiConta.png')
+end;
+
+procedure TF_register.lb_contaMouseLeave(Sender: TObject);
+begin
+  inherited;
+  lb_conta.Picture.LoadFromFile(dm.templates+'lb_possuiConta.png')
+end;
+
+procedure TF_register.lock2Click(Sender: TObject);
+begin
+  inherited;
+  if lock2Imagem then
+  begin
+    lock2Imagem:=false;
+    lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
+    maskEdit3.PasswordChar:=#0;
+  end else begin
+     lock2Imagem:=true;
+    lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
+    maskEdit3.PasswordChar:='*';
+  end;
+end;
+
+procedure TF_register.lock2MouseEnter(Sender: TObject);
+begin
+  inherited;
+  lock2.Picture.LoadFromFile(dm.hover+LockKey(lock2Imagem));
+end;
+
+procedure TF_register.lock2MouseLeave(Sender: TObject);
+begin
+  inherited;
+  lock2.Picture.LoadFromFile(dm.templates+LockKey(lock2Imagem));
+end;
+
+procedure TF_register.lockClick(Sender: TObject);
+begin
+  inherited;
+  if lockImagem then
+  begin
+    lockImagem:=false;
+    lock.Picture.LoadFromFile(dm.hover+LockKey(lockImagem));
+    maskEdit2.PasswordChar:=#0;
+  end else begin
+     lockImagem:=true;
+    lock.Picture.LoadFromFile(dm.hover+LockKey(lockImagem));
+     maskEdit2.PasswordChar:='*';
+  end;
+end;
+
+function TF_register.LockKey(isShow: boolean): string;
+begin
+  if isShow then
+  result:='btn_mostrarSenha.png'
+  else
+  result:='btn_ocultarSenha.png'
+end;
+
+procedure TF_register.lockMouseEnter(Sender: TObject);
+begin
+  inherited;
+  lock.Picture.LoadFromFile(dm.hover+Lockkey(lockImagem));
+end;
+
+procedure TF_register.lockMouseLeave(Sender: TObject);
+begin
+  inherited;
+  lock.Picture.LoadFromFile(dm.templates+LockKey(lockImagem));
+end;
+
+
+// -------- VALIDANDO A DATA ------------
+
+function TF_register.dateValidation(data: string): boolean;
+var
+i,ano,mes,dia:integer;
+//bol:boolean;
+begin
+  //bol:=true;
+  for i := 1 to length(data) do
+  begin
+    if not(data[i] in ['0'..'9','/']) then
+    begin
+      result:=false;
+      exit;
+    end;
+  end;
+
+  ano:=strtoint( copy(data,7,4) );
+  mes:=strtoint( copy(data,4,2) );
+  dia:=strtoint( copy(data,1,2) );
+  if (dia > 31)or(dia < 1)or(mes>12)or(mes<1)or((2023-ano)>120)or((2023-ano)<0) then  //verifica se os valores sao veridicos
+  result:=false
+  else
+  result:=true;     //Se for uma data valida
+
+end;
+
+
+
+end.
+

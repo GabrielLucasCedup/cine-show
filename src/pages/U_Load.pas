@@ -15,6 +15,7 @@ type
     logo: TImage;
     procedure FormActivate(Sender: TObject);
     procedure timerTimer(Sender: TObject);
+    procedure FormShow(Sender: TObject);
 
   private
     { Private declarations }
@@ -30,6 +31,7 @@ var
   i:integer=2;
   j:integer=0;
   timer2:Ttimer;
+  //IsHide:boolean=false;
 
 implementation
 
@@ -58,7 +60,6 @@ begin
   CLIENTHEIGHT:=300;
   CLIENTWIDTH:=400;
 
-
   loader.height:=55;
   loader.Width:=55;
   loader.left:=(width div 2)-(loader.Width div 2);
@@ -70,6 +71,12 @@ begin
 end;
 
 
+
+procedure TF_Load.FormShow(Sender: TObject);
+begin
+  //if IsHide then
+  //hide;
+end;
 
 procedure TF_Load.Descreve;
 begin
@@ -86,17 +93,17 @@ begin
       alinhaLabel('Carregamento concluído!');
     end;
 
-    if J = 12 then
+    if J = 14 then
     begin
       alinhaLabel('Entrando...');
     end;
 
-    if J = 20 then
+    if J = 22 then
     begin
       alinhaLabel('Bem Vindo '+dm.UserExibe);
     end;
 
-    if J = 26 then
+    if J = 32 then
     begin
       hide;
       F_HomePage.showModal;
@@ -117,17 +124,57 @@ begin
       alinhaLabel('Sua conta está pronta!');
     end;
 
-    if J = 12 then
+    if J = 14 then
     begin
       alinhaLabel('Entrando...');
     end;
 
-    if J = 20 then
+    if J = 22 then
     begin
       alinhaLabel('Bem Vindo '+dm.UserExibe);
     end;
 
+    if J = 32 then
+    begin
+      hide;
+      F_HomePage.showModal;
+      Close;
+    end;
+  end else
+  if dm.LoadOption = 3 then
+  begin
+    if J = 1 then
+    begin
+      application.CreateForm(TF_HomePage,F_HomePage);
+      alinhaLabel('Login automático está sendo feito...');
+    end;
+
+    if J = 10 then
+    begin
+      alinhaLabel('Login feito!');
+    end;
+
+    if J = 14 then
+    begin
+      alinhaLabel('Carregando os dados...');
+    end;
+
+    if J = 22 then
+    begin
+      alinhaLabel('Carregamento concluído!');
+    end;
+
     if J = 26 then
+    begin
+      alinhaLabel('Entrando...');
+    end;
+
+    if J = 34 then
+    begin
+      alinhaLabel('Bem Vindo '+dm.UserExibe);
+    end;
+
+    if J = 44 then
     begin
       hide;
       F_HomePage.showModal;

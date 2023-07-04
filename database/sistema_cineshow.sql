@@ -45,6 +45,12 @@ CREATE TABLE retomar(
     midia_id int
 );
 
+CREATE TABLE autologin(
+	num_disk varchar(30) UNIQUE PRIMARY KEY,
+    usuario_id varchar(6),
+    data_efeito date
+);
+
 ALTER TABLE midia
 	ADD FOREIGN KEY(genero_id) REFERENCES generos(id);
 
@@ -55,6 +61,9 @@ ALTER TABLE favoritos
 ALTER TABLE retomar 
 	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id),
     ADD FOREIGN KEY(midia_id) REFERENCES midia(id);
+    
+ALTER TABLE autologin
+	ADD FOREIGN KEY(usuario_id) REFERENCES usuario(id);
 
 insert into generos values (default,'Ação'),(default,'Romance'),(default,'Aventura'),(default,'Comédia'),(default,'Anime'),(default,'Suspense');
 

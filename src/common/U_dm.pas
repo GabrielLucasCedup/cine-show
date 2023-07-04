@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
   FireDAC.Phys.MySQLDef, Data.DB, FireDAC.Phys.MySQL, FireDAC.Comp.Client,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
-  FireDAC.Comp.DataSet, U_MediaClass,System.Generics.Collections,vcl.Dialogs;
+  FireDAC.Comp.DataSet, U_MediaClass,System.Generics.Collections,vcl.Dialogs,Winapi.Windows;
 
 type
   Tdm = class(TDataModule)
@@ -20,6 +20,8 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    // SISTEMA
+    function GetDiskSerial:string;
 
     // tabela USUARIO
     procedure UserActive;
@@ -34,38 +36,56 @@ type
     procedure RetomarActive;
     procedure RetomarDesactive;
 
+    // tabela AUTOLOGIN
+    function RememberValid(num_disk:string):boolean;
+
   public
     { Public declarations }
-    var
-    UserID:string;
-    UserExibe:string;
+
+    // SISTEMA
+    var UserID:string;
+    var UserExibe:string;
 
     //LOAD
-    LoadOption:integer;
+    var LoadOption:integer;
+
+    //OUT
+    var OutOption:integer;
 
     // PATH
-    templates:string;
-    media:string;
-    capa:string;
-    hover:string;
+    var templates:string;
+    var media:string;
+    var capa:string;
+    var hover:string;
 
 
     // CONTAS
     function Authentication(email:string;senha:string):boolean;
     procedure CreateUser(usuario,email,senha,nasc:string);
-    function TransformExibe(nome:string):string;
+
 
     // tabela USUARIO
     function UserFindByEmail(pesq:string):boolean;
     function UserFindById(pesq:string):boolean;
+    function UserGetNickNameById(pesq:String):string;
 
     // tabela MIDIA
     function MediaFindByName(pesq:string):boolean;
     function MediaSelectRecentes:TObjectList<TMedia>;
+    function MediaSelectPopulares:TObjectList<TMedia>;
 
     // tabela RETOMAR
-    function RetomarCount(idUsuario:string):integer;
-    function RetomarSelectAll(idUsuario:string):TObjectList<TMedia>;
+    function RetomarCount:integer;
+    function RetomarSelectAll:TObjectList<TMedia>;
+
+    // tabela AUTOLOGIN
+    procedure Remember;
+    function IsRemember:boolean;
+    procedure RememberDeleteByDisk(num_disk:STRING);
+
+    // EXTRAS
+    function LockKey(isShow:boolean):string;
+    function TransformExibe(nome:string):string;
 
   end;
 
@@ -98,6 +118,7 @@ end;
 
 
 // -------------- CONTAS -------------------------------------------------
+
 
 
 
@@ -143,24 +164,8 @@ begin
   UserDesactive;
 end;
 
-function Tdm.TransformExibe(nome: string): string;
-var
-i:integer;
-str:string;
-begin
-  str:='';
-  for i:=1 to length(nome) do
-  begin
-    if i = 1 then
-    str:=str+Uppercase(nome[i])
-    else
-    if nome[i-1] = ' ' then
-    str:=str+Uppercase(nome[i])
-    else
-    str:=str+lowercase(nome[i]);
-  end;
-  result:=str;
-end;
+
+
 
 
 // -------------- USUARIO ------------------------------------------------
@@ -210,6 +215,22 @@ begin
      UserDesactive;
   end;
 
+end;
+
+function Tdm.UserGetNickNameById(pesq:String):string;
+begin
+  UserActive;
+  with QUser do
+  begin
+    SQL.Text:='SELECT nome_exibido FROM USUARIO WHERE id = :pesq';
+    ParamByName('pesq').AsString:=pesq;
+    OPEN;
+    if not IsEmpty then
+      Result:= Fields[0].AsString
+    else
+      Result:='';
+  end;
+  UserDesactive;
 end;
 
 function Tdm.IdGeneration: string;
@@ -293,6 +314,34 @@ begin
   result:=Olist;
 end;
 
+function Tdm.MediaSelectPopulares: TObjectList<TMedia>;
+var
+OList:TObjectList<TMedia>;
+begin
+  Olist:= TObjectList<TMedia>.Create;
+  MediaActive;
+  with QMedia do
+  begin
+    SQL.Text:= 'SELECT id FROM MIDIA WHERE visualizacao >= (SELECT (visualizacao + 50) as views FROM MIDIA ORDER BY visualizacao DESC LIMIT 4,1) ORDER BY visualizacao DESC';
+    OPEN;
+    if IsEmpty then
+    begin
+      Result:=Olist;
+      exit
+    end;
+
+    First;
+    while not EOF do
+    begin
+      Olist.Add(TMedia.create(fields[0].AsString));
+      next;
+    end;
+
+  end;
+  MediaDesactive;
+  result:=Olist;
+end;
+
 
 
 // ---------- RETOMAR -----------------------------------------------------
@@ -304,14 +353,14 @@ begin
  QRetomar.Active:=true;
 end;
 
-function Tdm.RetomarCount(idUsuario:String): integer;
+function Tdm.RetomarCount: integer;
 begin
   RetomarActive;
   with QRetomar do
   begin
      Active:=true;
      SQL.Text:= 'SELECT COUNT(MIDIA_ID) FROM RETOMAR WHERE USUARIO_ID = :pesq';
-     ParamByName('pesq').AsString:=idUsuario;
+     ParamByName('pesq').AsString:=UserID;
      OPEN;
      if not IsEmpty then
      result:=Fields[0].AsInteger
@@ -329,10 +378,174 @@ begin
    QUser.Close;
 end;
 
-function Tdm.RetomarSelectAll(idUsuario: string): TObjectList<TMedia>;
+function Tdm.RetomarSelectAll: TObjectList<TMedia>;
+var
+Olist:TObjectList<TMedia>;
 begin
- //sexo
+  Olist:= TObjectList<TMedia>.Create;
+  RetomarActive;
+  with QRetomar do
+  begin
+    SQL.Text:= 'SELECT midia_id FROM RETOMAR WHERE usuario_id = :pesq';
+    ParamByName('pesq').AsString:=UserID;
+    OPEN;
+    if not IsEmpty then
+    begin
+      First;
+      while not EOF do
+      begin
+        Olist.Add( TMedia.create( Fields[0].AsString ) );
+        Next;
+      end;
+      Showmessage(Olist[0].GetNome);
+    end;
+    result:=Olist;
+  end;
+  RetomarDesactive;
 end;
 
+
+
+// ------------ AUTOLOGIN -----------------------------------------------
+
+
+
+
+procedure Tdm.Remember;
+var
+QRemember: TFDQuery;
+begin
+  QRemember:=TFDQuery.Create(dm);
+  with QRemember do
+  begin
+    connection:=conexao;
+    SQL.Text:='SELECT num_disk FROM AUTOLOGIN';
+    Active:=true;
+    SQl.Text:='INSERT INTO AUTOLOGIN VALUES (:disk ,:user,:data )';
+    ParamByName('disk').AsString:=GetDiskSerial;
+    ParamByName('user').AsString:=UserID;
+    ParamByName('data').AsDate:=Date;
+    execute;
+  end;
+  QRemember.Free;
+end;
+
+function Tdm.IsRemember: boolean;
+var
+QRemember: TFDQuery;
+num_disk:string;
+begin
+  QRemember:=TFDQuery.Create(dm);
+  with QRemember do
+  begin
+    connection:=conexao;
+    SQL.Text:='SELECT num_disk FROM AUTOLOGIN ';
+    Active:=true;
+    if not IsEmpty then
+    begin
+      num_disk:=GetDiskSerial;
+      SQl.Text:='SELECT usuario_id FROM AUTOLOGIN WHERE num_disk = :disk';
+      ParamByName('disk').AsString:=num_disk;
+      OPEN;
+      if not IsEmpty then
+      begin
+         if RememberValid(num_disk) then
+         begin
+           UserID:=Fields[0].AsString;
+           UserExibe:=UserGetNickNameById(UserID);
+           result:=true;
+           exit
+         end else begin
+           RememberDeleteByDisk(num_disk);
+           result:=false;
+           exit
+         end;
+
+      end; //nao seja registrado
+    end; //vazio
+    result:=not IsEmpty;
+  end; //with
+  QRemember.Free;
+end;
+
+procedure Tdm.RememberDeleteByDisk(num_disk:string);
+var
+QRemember: TFDQuery;
+begin
+  QRemember:=TFDQuery.Create(dm);
+  with QRemember do
+  begin
+    connection:=conexao;
+    SQL.Text:='SELECT num_disk FROM AUTOLOGIN';
+    Active:=true;
+    SQl.Text:='DELETE FROM AUTOLOGIN WHERE num_disk = :disk';
+    ParamByName('disk').AsString:=num_disk;
+    EXECUTE;
+  end;
+  QRemember.Free;
+end;
+
+function Tdm.RememberValid(num_disk:string): boolean;
+var
+QRemember: TFDQuery;
+begin
+  QRemember:=TFDQuery.Create(dm);
+  with QRemember do
+  begin
+    connection:=conexao;
+    SQL.Text:='SELECT num_disk FROM AUTOLOGIN';
+    Active:=true;
+    SQl.Text:=SQL.Text+' WHERE datediff(curdate(),data_efeito) <= 30 AND num_disk = :disk';
+    ParamByName('disk').AsString:=num_disk;
+    OPEN;
+    result:=not IsEmpty;
+  end;
+  QRemember.Free;
+end;
+
+
+
+// ------------ EXTRAS -----------------------------------------------
+
+function Tdm.LockKey(isShow: boolean): string;
+begin
+  if isShow then
+  result:='btn_mostrarSenha.png'
+  else
+  result:='btn_ocultarSenha.png'
+end;
+
+function Tdm.TransformExibe(nome: string): string;
+var
+i:integer;
+str:string;
+begin
+  str:='';
+  for i:=1 to length(nome) do
+  begin
+    if i = 1 then
+    str:=str+Uppercase(nome[i])
+    else
+    if nome[i-1] = ' ' then
+    str:=str+Uppercase(nome[i])
+    else
+    str:=str+lowercase(nome[i]);
+  end;
+  result:=str;
+end;
+
+function Tdm.GetDiskSerial: string;
+var
+  VolumeSerialNumber: DWORD;
+  MaximumComponentLength: DWORD;
+  FileSystemFlags: DWORD;
+  SerialNumber: string;
+begin
+  if GetVolumeInformation('C:\', nil, 0, @VolumeSerialNumber, MaximumComponentLength, FileSystemFlags, nil, 0) then
+    SerialNumber := IntToHex(VolumeSerialNumber, 8)
+  else
+    SerialNumber := '';
+  Result := SerialNumber;
+end;
 
 end.
