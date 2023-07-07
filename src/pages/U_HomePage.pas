@@ -19,9 +19,24 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure ScrollMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
+    procedure ScrollMouseEnter(Sender: TObject);
   private
     { Private declarations }
-    procedure EventMouseEnter(sender:TObject);
+
+    //------------------------------------------
+
+    // CAPA DO FILME
+    procedure EventCapaEnter(sender:TObject);
+    // PLAYER DA CAPA
+    procedure EventPlayerEnter(sender: TObject);
+    procedure EventPlayerLeave(sender: TObject);
+    procedure EventPlayerClick(sender: TObject);
+    // SAIBA MAIS DA CAPA
+    procedure EventSaibaEnter(sender: TObject);
+    procedure EventSaibaLeave(sender: TObject);
+    procedure EventSaibaClick(sender: TObject);
+
+    //------------------------------------------
     procedure CriaTela;
     procedure TerminaTela;
     procedure Dinamiza(n: integer);
@@ -31,7 +46,7 @@ type
   public
     { Public declarations }
     procedure CriaLabel(texto:string);
-    procedure CriaImagem;
+    procedure CriaImagem(MediaID:string);
   end;
 
 var
@@ -41,11 +56,14 @@ var
   filme:TImage;
   titulo:TLabel;
   item:TMedia;
+  margin:integer=18;
+  IsEnter:boolean=true;
+
 implementation
 
 {$R *.dfm}
 
-uses U_dm, U_Out, U_Login;
+uses U_dm, U_Out, U_Login, U_player;
 
 
 procedure TF_HomePage.FormActivate(Sender: TObject);
@@ -81,14 +99,39 @@ begin
 end;
 
 
-
+procedure TF_HomePage.ScrollMouseEnter(Sender: TObject);
+var
+i:integer;
+begin
+  inherited;
+  IsEnter:=true;
+  for I := 0 to (scroll.ComponentCount-1) do
+  begin
+  if scroll.Components[i] is TImage then
+    begin
+      if TImage(scroll.Components[i]).Width = (299+margin) then
+      begin
+        with Timage(scroll.Components[i]) do
+        begin
+          Width:=Width-margin;
+          Height:=Height-margin;
+          Top:= Top+(margin div 2);
+          Left:=Left+(margin div 2);
+        end;
+      end else
+      if TImage(scroll.Components[i]).Width <> (299) then
+      begin
+          Timage(scroll.Components[i]).hide;
+      end;
+    end;
+  end;
+end;
 
 procedure TF_HomePage.ScrollMouseWheelDown(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
 begin
   inherited;
   Scroll.VertScrollBar.Position:=Scroll.VertScrollBar.ScrollPos + 30;
-  //showmessage(Scroll.VertScrollBar.ScrollPos.ToString +' / '+ Scroll.VertScrollBar.Position.ToString);
 end;
 
 procedure TF_HomePage.ScrollMouseWheelUp(Sender: TObject; Shift: TShiftState;
@@ -100,19 +143,13 @@ end;
 
 procedure TF_HomePage.TerminaTela;
 var
-  // variáveis utilizadas para criar os títulos e capas dos filmes
-  // ...
   EmptyPanel: TPanel;
 begin
-  // Adicione os títulos e capas dos filmes no ScrollBox
-  // ...
-
-  // Crie um TPanel vazio como último elemento do ScrollBox
   EmptyPanel := TPanel.Create(Scroll);
   EmptyPanel.Parent := Scroll;
   EmptyPanel.top := topo-5;
   EmptyPanel.Width:=scroll.Width-25;
-  EmptyPanel.Height := 0; // Define a altura desejada do espaço adicional
+  EmptyPanel.Height := 0;
 end;
 
 
@@ -130,7 +167,7 @@ begin
       CriaLabel('Continuar Assistindo');
       for item in list do
       begin
-        CriaImagem;
+        CriaImagem(item.GetId);
       end;
       encerraImg;
     end;
@@ -145,12 +182,12 @@ end;
 
 
 
-procedure TF_HomePage.CriaImagem;
+procedure TF_HomePage.CriaImagem(MediaID:string);
 begin
-
   colunaImg:=colunaImg+1;
   filme:=TImage.Create(Scroll);
   filme.Parent:=Scroll;
+  filme.HelpKeyword:=item.GetId;
   filme.Width:=299;
   filme.Height:=155;
   filme.Picture.LoadFromFile(dm.capa+item.GetCapa);
@@ -162,7 +199,7 @@ begin
     adicionaTopo(true);
     colunaImg:=-1;
   end;
-  filme.OnMouseEnter:=EventMouseEnter;
+  filme.OnMouseEnter:=EventCapaEnter;
 end;
 
 procedure TF_HomePage.CriaLabel(texto: string);
@@ -170,8 +207,8 @@ begin
   titulo:=TLabel.Create(Scroll);
   titulo.Parent:=Scroll;
   titulo.Caption:=texto;
-  titulo.Font.Name:='Times New Roman';
-  titulo.Font.Size:=17;
+  titulo.Font.Name:='Segoe UI';
+  titulo.Font.Size:=19;
   titulo.top:=TOPO;
   titulo.left:=(scroll.Width div 2)-(titulo.Width div 2);
   adicionaTopo(false);
@@ -195,7 +232,7 @@ begin
     CriaLabel('Lançamentos desse ano');
     for item in list do
     begin
-      CriaImagem;
+      CriaImagem(item.GetId);
     end;
     encerraImg;
 
@@ -209,7 +246,7 @@ begin
     CriaLabel('Populares no CineShow');
     for item in list do
     begin
-      CriaImagem;
+      CriaImagem(item.GetId);
     end;
     encerraImg;
 
@@ -232,9 +269,87 @@ begin
   end;
 end;
 
-procedure TF_HomePage.EventMouseEnter(sender: TObject);
-begin
+// EVENTOS IMAGES DINAMICAS
 
+procedure TF_HomePage.EventCapaEnter(sender: TObject);
+var
+imgs:TImage;
+begin
+  if IsEnter then
+  begin
+    with Timage(sender) do
+    begin
+      Width:=299+margin;
+      Height:=155+margin;
+      Top:= Top-(margin div 2);
+      Left:=Left-(margin div 2);
+      //-------------------------------------------------------
+
+      imgs:=TImage.Create(scroll);
+      imgs.Parent:=scroll;
+      imgs.HelpKeyword:=HelpKeyword;
+      imgs.Width:=60;
+      imgs.Height:=60;
+      imgs.Picture.LoadFromFile(dm.templates+'btn_player.png');
+      imgs.Left:=left+((Width div 2)-(imgs.Width div 2));
+      imgs.Top:=top+((Height div 2)-(imgs.Height div 2));
+
+      imgs.OnMouseEnter:=EventPlayerEnter;
+      imgs.OnMouseLeave:=EventPlayerLeave;
+      imgs.OnClick:=EventPlayerClick;
+
+      //-------------------------------------------------------
+
+      imgs:=TImage.Create(scroll);
+      imgs.Parent:=scroll;
+      imgs.Width:=95;
+      imgs.Height:=25;
+      imgs.Picture.LoadFromFile(dm.templates+'btn_saiba.png');
+      imgs.Left:=left+(Width-(Width div 3));
+      imgs.Top:=top+(Height-(height div 5));
+
+      imgs.OnMouseEnter:=EventSaibaEnter;
+      imgs.OnMouseLeave:=EventSaibaLeave;
+      imgs.OnClick:=EventSaibaClick;
+
+    end;
+    IsEnter:=false;
+  end;
+end;
+
+procedure TF_HomePage.EventPlayerClick(sender: TObject);
+begin
+  dm.FilmeOption:=TMedia.create((sender as TImage).HelpKeyword);
+  self.hide;
+  application.CreateForm(TF_Player,F_Player);
+  F_Player.showModal;
+  showmessage((sender as TImage).HelpKeyword);
+
+end;
+
+procedure TF_HomePage.EventPlayerEnter(sender: TObject);
+begin
+  (sender as TImage).Picture.LoadFromFile(dm.hover+'btn_player.png');
+end;
+
+procedure TF_HomePage.EventPlayerLeave(sender: TObject);
+begin
+  (sender as TImage).Picture.LoadFromFile(dm.templates+'btn_player.png');
+end;
+
+procedure TF_HomePage.EventSaibaClick(sender: TObject);
+begin
+  Showmessage((sender as TImage).GetNamePath);
+end;
+
+procedure TF_HomePage.EventSaibaEnter(sender: TObject);
+begin
+  (sender as TImage).Picture.LoadFromFile(dm.hover+'btn_saiba.png');
+end;
+
+procedure TF_HomePage.EventSaibaLeave(sender: TObject);
+begin
+  (sender as TImage).Picture.LoadFromFile(dm.templates+'btn_saiba.png');
 end;
 
 // ----------- FUNÇÕES EXTRAS -----------

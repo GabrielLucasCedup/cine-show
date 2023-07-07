@@ -52,6 +52,9 @@ type
     //OUT
     var OutOption:integer;
 
+    //PLAYER
+    var FilmeOption:TMedia;
+
     // PATH
     var templates:string;
     var media:string;

@@ -117,6 +117,7 @@ begin
         FDuracao:=fieldByName('duracao').AsString;
         FLancamento:=fieldByName('data_lancamento').AsString;
         FGeneroId:=fieldByName('genero_id').AsString;
+        FId:=id;
       end;
 
     end;

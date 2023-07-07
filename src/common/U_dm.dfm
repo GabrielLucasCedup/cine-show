@@ -11,14 +11,10 @@ object dm: Tdm
       'Port=3307'
       'Password=3307'
       'DriverID=MySQL')
-    Connected = True
     Left = 104
     Top = 64
   end
   object driver: TFDPhysMySQLDriverLink
-    VendorLib = 
-      'E:\Git Lucas\gabriellucas353\Desenvolvimento Sistemas\SistemaGen' +
-      'erico\cine-show\libs\libmySQL.dll'
     Left = 176
     Top = 136
   end
@@ -30,7 +26,6 @@ object dm: Tdm
     Top = 144
   end
   object QMedia: TFDQuery
-    Active = True
     Connection = conexao
     SQL.Strings = (
       'select nome_midia from midia')

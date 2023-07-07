@@ -766,11 +766,12 @@ object F_HomePage: TF_HomePage
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -21
-    Font.Name = 'Times New Roman'
+    Font.Name = 'Segoe UI'
     Font.Style = []
     ParentColor = False
     ParentFont = False
     TabOrder = 0
+    OnMouseEnter = ScrollMouseEnter
     OnMouseWheelDown = ScrollMouseWheelDown
     OnMouseWheelUp = ScrollMouseWheelUp
   end

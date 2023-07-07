@@ -1,0 +1,51 @@
+object F_player: TF_player
+  Left = 0
+  Top = 0
+  Caption = 'Media Player'
+  ClientHeight = 768
+  ClientWidth = 1024
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnActivate = FormActivate
+  OnClose = FormClose
+  PixelsPerInch = 96
+  TextHeight = 13
+  object MediaPlayer: TWindowsMediaPlayer
+    Left = 0
+    Top = -8
+    Width = 1024
+    Height = 768
+    TabOrder = 0
+    OnMouseMove = MediaPlayerMouseMove
+    ControlData = {
+      0003000008000200000000000500000000000000F03F03000000000005000000
+      00000000000008000200000000000300010000000B00FFFF0300000000000B00
+      FFFF08000200000000000300320000000B00000008000A0000006E006F006E00
+      650000000B0000000B0000000B0000000B00FFFF0B0000000800020000000000
+      0800020000000000080002000000000008000200000000000B000000D5690000
+      604F0000}
+  end
+  object painel: TPanel
+    Left = 0
+    Top = 712
+    Width = 1024
+    Height = 56
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = 'painel'
+    Color = clBlack
+    ParentBackground = False
+    TabOrder = 1
+  end
+  object timer: TTimer
+    Interval = 700
+    OnTimer = timerTimer
+    Left = 48
+    Top = 32
+  end
+end
