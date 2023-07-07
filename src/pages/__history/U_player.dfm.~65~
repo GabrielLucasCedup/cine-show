@@ -2,8 +2,8 @@ object F_player: TF_player
   Left = 0
   Top = 0
   Caption = 'Media Player'
-  ClientHeight = 768
-  ClientWidth = 1024
+  ClientHeight = 574
+  ClientWidth = 1020
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,23 +17,22 @@ object F_player: TF_player
   TextHeight = 13
   object MediaPlayer: TWindowsMediaPlayer
     Left = 0
-    Top = -8
-    Width = 1024
-    Height = 768
+    Top = 0
+    Width = 1020
+    Height = 574
     TabOrder = 0
-    OnMouseMove = MediaPlayerMouseMove
     ControlData = {
       0003000008000200000000000500000000000000F03F03000000000005000000
       00000000000008000200000000000300010000000B00FFFF0300000000000B00
       FFFF08000200000000000300320000000B00000008000A0000006E006F006E00
       650000000B0000000B0000000B0000000B00FFFF0B0000000800020000000000
-      0800020000000000080002000000000008000200000000000B000000D5690000
-      604F0000}
+      0800020000000000080002000000000008000200000000000B0000006C690000
+      533B0000}
   end
   object painel: TPanel
     Left = 0
-    Top = 712
-    Width = 1024
+    Top = 518
+    Width = 1020
     Height = 56
     Align = alBottom
     BevelOuter = bvNone
@@ -41,10 +40,11 @@ object F_player: TF_player
     Color = clBlack
     ParentBackground = False
     TabOrder = 1
+    ExplicitTop = 712
+    ExplicitWidth = 1024
   end
   object timer: TTimer
-    Interval = 700
-    OnTimer = timerTimer
+    Interval = 10000
     Left = 48
     Top = 32
   end

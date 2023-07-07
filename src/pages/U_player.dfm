@@ -1,9 +1,10 @@
 object F_player: TF_player
   Left = 0
   Top = 0
+  BorderStyle = bsSingle
   Caption = 'Media Player'
-  ClientHeight = 574
-  ClientWidth = 1020
+  ClientHeight = 584
+  ClientWidth = 1030
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -31,8 +32,8 @@ object F_player: TF_player
   end
   object painel: TPanel
     Left = 0
-    Top = 518
-    Width = 1020
+    Top = 528
+    Width = 1030
     Height = 56
     Align = alBottom
     BevelOuter = bvNone
@@ -40,8 +41,8 @@ object F_player: TF_player
     Color = clBlack
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 712
-    ExplicitWidth = 1024
+    ExplicitTop = 518
+    ExplicitWidth = 1020
   end
   object timer: TTimer
     Interval = 10000

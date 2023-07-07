@@ -46,26 +46,27 @@ begin
     inherited;
     mediaplayer.URL:= dm.media + dm.FilmeOption.getMP4;
     player:=mediaplayer.ControlInterface;
-    //mediaplayer.stretchToFit:=true;
+    mediaplayer.stretchToFit:=true;
     timer.Enabled:=true;
+
     Constraints.MaxHeight :=  0;
-   // Constraints.MinHeight := 807;
-    Constraints.MinHeight := 400;
+    //Constraints.MinHeight := 807;
+    Constraints.MinHeight := 574;
     Constraints.MaxWidth := 0;
     //Constraints.MinWidth := 1040;
-    Constraints.MinWidth := 500;
+    Constraints.MinWidth := 1020;
     //self.Height:=606;
     //self.Width:= 1025;
+
     self.clientwidth:=1020;
     self.ClientHeight:=574;
 
-    borderIcons:=[biSystemMenu,biMinimize,biMaximize];
-
     mediaplayer.Width:=clientWidth;
     mediaplayer.Height:=clientHeight;
+    borderIcons:=[biSystemMenu,biMinimize,biMaximize];
     mediaplayer.left:=0;
     playercontrols;
-    showmessage(width.ToString+' '+height.ToString+' '+mediaplayer.top.ToString);
+    showmessage(Clientwidth.ToString+' '+Clientheight.ToString+' '+mediaplayer.top.ToString);
 end;
 procedure TF_player.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
