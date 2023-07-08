@@ -3,8 +3,8 @@ object F_player: TF_player
   Top = 0
   BorderStyle = bsSingle
   Caption = 'Media Player'
-  ClientHeight = 584
-  ClientWidth = 1030
+  ClientHeight = 574
+  ClientWidth = 1020
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -32,17 +32,23 @@ object F_player: TF_player
   end
   object painel: TPanel
     Left = 0
-    Top = 528
-    Width = 1030
+    Top = 518
+    Width = 1020
     Height = 56
     Align = alBottom
     BevelOuter = bvNone
-    Caption = 'painel'
-    Color = clBlack
+    Caption = 'Homem Aranha no Aranha-Verso'
+    Color = 921100
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -21
+    Font.Name = 'Tahoma'
+    Font.Style = []
     ParentBackground = False
+    ParentFont = False
     TabOrder = 1
-    ExplicitTop = 518
-    ExplicitWidth = 1020
+    ExplicitTop = 528
+    ExplicitWidth = 1030
   end
   object timer: TTimer
     Interval = 10000
