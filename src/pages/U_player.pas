@@ -11,15 +11,24 @@ type
     painel: TPanel;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure PlayerControls;
+    procedure timerTimer(Sender: TObject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 
     //------------------EVENTOS---------------------------
 
     //PLAY
-     function imageChange(IsHover:boolean;imgs:Timage):string;
+
     procedure EventPlayClick(sender:TObject);
     procedure EventPlayEnter(sender:TObject);
     procedure EventPlayLeave(sender:TObject);
+
+    function imageChange(IsHover:boolean;imgs:Timage):string;
+    procedure PlayerControls;
+    procedure showPlayerControls;
+    procedure hidePlayerControls;
+    procedure PlayAction(IsHover:boolean;imgs:TImage);
+    function getPlayerControls(nome:string):TImage;
+
 
   private
     { Private declarations }
@@ -31,7 +40,9 @@ var
   j:integer=0;
   IsPause:boolean=true;
   IsFull:boolean=true;
+  IsMute:boolean=false;
   player:IWMPCore;
+  FAction: integer;
 
 implementation
 {$R *.dfm}
@@ -45,7 +56,9 @@ begin
     mediaplayer.URL:= dm.media + dm.FilmeOption.getMP4;
     player:=mediaplayer.ControlInterface;
     timer.Enabled:=true;
+    FAction:=1;
 
+    painel.Caption:=dm.FilmeOption.GetNome;
     Constraints.MaxHeight :=  0;
     Constraints.MinHeight := 574;
     Constraints.MaxWidth := 0;
@@ -54,6 +67,7 @@ begin
     self.clientwidth:=1020;
     self.ClientHeight:=574;
 
+    player.settings.volume:=100;
     mediaplayer.Width:=clientWidth;
     mediaplayer.Height:=clientHeight;
     borderIcons:=[biSystemMenu,biMinimize];
@@ -63,12 +77,94 @@ end;
 procedure TF_player.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
-  dm.OutOption:=1;
-  Action:=TCloseAction.caNone;
-  Application.CreateForm(TF_Out,F_Out);
-  F_Out.ShowModal;
+  if FAction = 1 then
+  begin
+    dm.OutOption:=1;
+    Action:=TCloseAction.caNone;
+    Application.CreateForm(TF_Out,F_Out);
+    F_Out.ShowModal;
+  end else
+    Action:=TCloseAction.caFree;
+
 end;
 
+function TF_player.getPlayerControls(nome: string): TImage;
+var
+i:integer;
+begin
+  for i:=0 to painel.ComponentCount-1 do
+  begin
+    if painel.Components[i] is TImage then
+    begin
+      if (painel.Components[i] as TImage).Name = nome then
+      begin
+        result:=(painel.Components[i] as TImage);
+        exit
+      end;
+    end;
+  end;
+end;
+
+procedure TF_player.PlayAction(IsHover: boolean; imgs: TImage);
+begin
+  if imgs.name = 'FPlay' then   // PLAY
+  begin
+    if IsPause then
+      begin
+        IsPause:=false;
+        player.controls.pause;
+        imgs.Picture.LoadFromFile(dm.templates + F_Player.imageChange(IsHover,imgs));
+      end else begin
+        IsPause:=true;
+        player.controls.play;
+        imgs.Picture.LoadFromFile(dm.templates + F_Player.imageChange(IsHover,imgs));
+      end;
+  end else
+  if imgs.name = 'FAvancar' then   // AVANCAR
+  begin
+     player.controls.currentPosition:=player.controls.currentPosition+20;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+  end else
+  if imgs.name = 'FRetroceder' then   // RETROCEDER
+  begin
+     player.controls.currentPosition:=player.controls.currentPosition-20;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+  end else
+  if imgs.Name = 'FfullScreen' then       //FULL SCREEN
+  begin
+    if IsFull then
+    begin
+      IsFull:=false;
+      mediaplayer.fullScreen:=true;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end else begin
+      IsFull:=true;
+      mediaplayer.fullScreen:=false;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end;
+  end else
+  if imgs.Name = 'FVolume' then       //FULL SCREEN
+  begin
+    if IsMute then
+    begin
+      IsMute:=false;
+      player.settings.mute:=false;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end else begin
+      IsMute:=true;
+      player.settings.mute:=true;
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end;
+  end else
+  if imgs.Name = 'FVoltar' then
+  begin
+    dm.OutOption:=2;
+    FAction:=2;
+    Application.CreateForm(TF_Out,F_Out);
+    F_Out.ShowModal;
+  end;
+
+end;
 
 procedure TF_player.PlayerControls;
 var
@@ -79,52 +175,7 @@ begin
   painel.Height:=60;
   painel.Align:=alBottom;
 
-  FRight:=painel.Width-50;
-  // play
-  imgs:=TImage.Create(Painel);
-  imgs.Parent:=painel;
-  imgs.Name:='FPlay';
-  imgs.Stretch:=true;
-  imgs.Width:=32;
-  imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
-  imgs.Left:=FRight;
-  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
-  imgs.OnClick:=EventPlayClick;
-  imgs.OnMouseEnter:=EventPlayEnter;
-  imgs.OnMouseLeave:=EventPlayLeave;
-
-  FRight:=FRight-50;
-  // avancar
-  imgs:=TImage.Create(Painel);
-  imgs.Parent:=painel;
-  imgs.Name:='FAvancar';
-  imgs.Stretch:=true;
-  imgs.Width:=32;
-  imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
-  imgs.Left:=FRight;
-  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
-  imgs.OnClick:=EventPlayClick;
-  imgs.OnMouseEnter:=EventPlayEnter;
-  imgs.OnMouseLeave:=EventPlayLeave;
-
-  FRight:=FRight-50;
-  // retroceder
-  imgs:=TImage.Create(Painel);
-  imgs.Parent:=painel;
-  imgs.Name:='FRetroceder';
-  imgs.Stretch:=true;
-  imgs.Width:=32;
-  imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
-  imgs.Left:=FRight;
-  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
-  imgs.OnClick:=EventPlayClick;
-  imgs.OnMouseEnter:=EventPlayEnter;
-  imgs.OnMouseLeave:=EventPlayLeave;
-
-  FRight:=FRight-50;
+  FRight:=painel.Width-60;
   // full Screen
   imgs:=TImage.Create(Painel);
   imgs.Parent:=painel;
@@ -139,8 +190,101 @@ begin
   imgs.OnMouseEnter:=EventPlayEnter;
   imgs.OnMouseLeave:=EventPlayLeave;
 
-  FRight:=FRight-50;
+  FRight:=FRight-60;
+  //volume
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='FVolume';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Left:=FRight;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
 
+  FRight:=FRight-60;
+  //voltar
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='FVoltar';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Left:=FRight;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
+
+  FLeft:=30;
+  // retroceder
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='FRetroceder';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Left:=FLeft;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
+
+  FLeft:=FLeft+60;
+  // play
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='FPlay';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Left:=FLeft;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
+
+  FLeft:=FLeft+60;
+  // avancar
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='FAvancar';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Left:=FLeft;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
+
+
+end;
+
+procedure TF_player.showPlayerControls;
+begin
+  painel.Visible:=true;
+end;
+
+procedure TF_player.hidePlayerControls;
+begin
+  painel.Visible:=false;
+end;
+
+procedure TF_player.timerTimer(Sender: TObject);
+begin
+  inherited;
+  if player.playState = wmppsPlaying then
+  begin
+    j:=j+1;
+  end;
 end;
 
 //---------------------------  EVENTOS  --------------------------------------
@@ -149,43 +293,7 @@ end;
 
 procedure TF_player.EventPlayClick(sender: TObject);
 begin
-  if (sender as TImage).Name = 'FPlay' then      // PLAY
-  begin
-    if IsPause then
-    begin
-      IsPause:=false;
-      player.controls.pause;
-      (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-    end else begin
-      IsPause:=true;
-      player.controls.play;
-      (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-    end;
-  end else
-  if (sender as TImage).Name = 'FAvancar' then       //AVANCAR
-  begin
-      player.controls.currentPosition:=player.controls.currentPosition+20;
-      (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-  end else
-  if (sender as TImage).Name = 'FRetroceder' then   //RETROCEDER
-  begin
-    player.controls.currentPosition:=player.controls.currentPosition-20;
-    (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-  end else
-  if (sender as TImage).Name = 'FfullScreen' then       //FULL SCREEN
-  begin
-    if IsFull then
-    begin
-      IsFull:=false;
-      mediaplayer.fullScreen:=true;
-      (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-    end else begin
-      IsFull:=true;
-      mediaplayer.fullScreen:=false;
-      (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
-    end;
-  end;
-
+  PlayAction(true,sender as TImage);
 end;
 
 //-------------------------- ENTER ----------------------------------------
@@ -208,9 +316,9 @@ function TF_player.imageChange(IsHover:boolean;imgs:TImage): string;
 var
  nome:string;
 begin
-  if imgs.Name = 'FPlay' then    //PLAY
+  if imgs.Name = 'FPlay' then            //PLAY
   begin
-      if IsPause then
+     if IsPause then
     begin
       if IsHover then
         result:='painelPlayer\hover\pause.png'
@@ -224,7 +332,7 @@ begin
         result:='painelPlayer\play.png';
     end;
   end else
-  if imgs.Name = 'FAvancar' then     //AVANCAR
+  if imgs.Name = 'FAvancar' then        //AVANCAR
   begin
      if IsHover then
        result:='painelPlayer\hover\avancar.png'
@@ -238,7 +346,7 @@ begin
      else
        result:='painelPlayer\retroceder.png';
   end else
-  if imgs.Name = 'FfullScreen' then    //FULL SCREEN
+  if imgs.Name = 'FfullScreen' then     //FULL SCREEN
   begin
     if IsFull then
     begin
@@ -253,9 +361,42 @@ begin
       else
         result:='painelPlayer\normalScreen.png';
     end;
+  end else
+  if imgs.Name = 'FVolume' then
+  begin
+    if IsMute then
+    begin
+      if IsHover then
+         result:='painelPlayer\hover\mudo.png'
+        else
+          result:='painelPlayer\mudo.png';
+    end else begin
+      if IsHover then
+        result:='painelPlayer\hover\volume.png'
+      else
+        result:='painelPlayer\volume.png';
+    end;
+  end else
+  if imgs.Name = 'FVoltar' then
+  begin
+    if IsHover then
+         result:='painelPlayer\hover\voltar.png'
+        else
+          result:='painelPlayer\voltar.png';
   end;
+
 end;
 
+procedure TF_player.FormKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  ShowMessage(key.ToString);
+  if key in [32,75] then
+  begin
+    PlayAction(false,getPlayerControls('FPlay'));
+  end;
+end;
 
 //------------------------------------------------------------------------------
 

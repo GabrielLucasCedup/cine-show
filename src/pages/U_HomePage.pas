@@ -323,7 +323,6 @@ begin
   self.hide;
   application.CreateForm(TF_Player,F_Player);
   F_Player.showModal;
-  showmessage((sender as TImage).HelpKeyword);
 
 end;
 

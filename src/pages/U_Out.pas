@@ -35,7 +35,7 @@ implementation
 
 {$R *.dfm}
 
-uses U_dm;
+uses U_dm, U_HomePage, U_player;
 
 procedure TF_Out.btnNClick(Sender: TObject);
 begin
@@ -54,7 +54,15 @@ end;
 
 procedure TF_Out.btnSClick(Sender: TObject);
 begin
-  Halt;
+  if dm.OutOption = 1 then
+    Halt
+  else
+  if dm.OutOption = 2 then
+  begin
+    F_Player.Close;
+    F_HomePage.show;
+    Close;
+  end;
 end;
 
 procedure TF_Out.btnSMouseEnter(Sender: TObject);
@@ -73,6 +81,12 @@ begin
   begin
 
     desc.Caption:='Deseja sair do CineShow?';
+
+  end else
+  if dm.OutOption = 2 then
+  begin
+
+    desc.Caption:='Voltar para a Tela Principal?';
 
   end;
 end;

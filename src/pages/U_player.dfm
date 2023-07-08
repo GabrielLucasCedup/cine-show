@@ -14,6 +14,7 @@ object F_player: TF_player
   OldCreateOrder = False
   OnActivate = FormActivate
   OnClose = FormClose
+  OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 13
   object MediaPlayer: TWindowsMediaPlayer
@@ -47,11 +48,9 @@ object F_player: TF_player
     ParentBackground = False
     ParentFont = False
     TabOrder = 1
-    ExplicitTop = 528
-    ExplicitWidth = 1030
   end
   object timer: TTimer
-    Interval = 10000
+    OnTimer = timerTimer
     Left = 48
     Top = 32
   end
