@@ -391,11 +391,24 @@ procedure TF_player.FormKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   inherited;
-  ShowMessage(key.ToString);
-  if key in [32,75] then
-  begin
-    PlayAction(false,getPlayerControls('FPlay'));
-  end;
+  case key of
+
+   32,75:PlayAction(false,getPlayerControls('FPlay'));
+   39,76:PlayAction(false,getPlayerControls('FAvancar'));
+   37,74:PlayAction(false,getPlayerControls('FRetroceder'));
+   70,122:PlayAction(false,getPlayerControls('FfullScreen'));
+   77:PlayAction(false,getPlayerControls('FVolume'));
+   27: begin
+      if not IsFull then
+      begin
+        IsFull:=true;
+        getPlayerControls('FfullScreen').Picture.LoadFromFile(dm.templates+ImageChange(false,getPlayerControls('FfullScreen')));
+      end;
+   end;
+
+  end;   //fecha Case
+
+
 end;
 
 //------------------------------------------------------------------------------

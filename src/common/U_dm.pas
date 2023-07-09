@@ -80,6 +80,7 @@ type
     // tabela RETOMAR
     function RetomarCount:integer;
     function RetomarSelectAll:TObjectList<TMedia>;
+    procedure RetomarAdd(MidiaId:String;tempo:Integer);
 
     // tabela AUTOLOGIN
     procedure Remember;
@@ -282,7 +283,7 @@ begin
   MediaActive;
   with QMEDIA do
   begin
-    SQL.Text:='SELECT NOME_MEDIA FROM MIDIA WHERE ID = :pesq';
+    SQL.Text:='SELECT NOME_MIDIA FROM MIDIA WHERE ID = :pesq';
     ParamByName('pesq').AsString:=pesq;
     open;
     result:= not IsEmpty;         //TRUE se encontrou FALSE se nao encontrou
@@ -403,6 +404,21 @@ begin
       Showmessage(Olist[0].GetNome);
     end;
     result:=Olist;
+  end;
+  RetomarDesactive;
+end;
+
+procedure Tdm.RetomarAdd(MidiaId:String;tempo: Integer);
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+    SQL.Text:= 'INSERT INTO RETOMAR VALUE(default,:atual,:data,:usuarioId,:midiaId)';
+    ParamByName('atual').AsInteger:=tempo;
+    ParamByName('data').AsDate:=Date;
+    ParamByName('usuarioId').AsString:=UserID;
+    ParamByName('midiaId').AsString:= midiaId;
+    Execute;
   end;
   RetomarDesactive;
 end;

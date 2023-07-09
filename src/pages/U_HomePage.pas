@@ -38,6 +38,7 @@ type
 
     //------------------------------------------
     procedure CriaTela;
+    procedure LimpaTela;
     procedure TerminaTela;
     procedure Dinamiza(n: integer);
     procedure adicionaTopo(IsImage:boolean);
@@ -46,7 +47,7 @@ type
   public
     { Public declarations }
     procedure CriaLabel(texto:string);
-    procedure CriaImagem(MediaID:string);
+    procedure CriaImagem();
   end;
 
 var
@@ -98,14 +99,15 @@ begin
 
 end;
 
-
 procedure TF_HomePage.ScrollMouseEnter(Sender: TObject);
 var
 i:integer;
+listRM:Tlist<integer>;
 begin
   inherited;
   IsEnter:=true;
-  for I := 0 to (scroll.ComponentCount-1) do
+  listRM:=Tlist<integer>.Create;
+  for I := (scroll.ComponentCount-1) downto 0 do
   begin
   if scroll.Components[i] is TImage then
     begin
@@ -119,12 +121,20 @@ begin
           Left:=Left+(margin div 2);
         end;
       end else
-      if TImage(scroll.Components[i]).Width <> (299) then
+      if (TImage(scroll.Components[i]).Width <> 299) then
       begin
-          Timage(scroll.Components[i]).hide;
+          listRM.Add(i);
       end;
     end;
   end;
+
+  for i in ListRM do
+  begin
+    scroll.Components[i].Free;
+
+  end;
+
+  ListRM.Free;
 end;
 
 procedure TF_HomePage.ScrollMouseWheelDown(Sender: TObject; Shift: TShiftState;
@@ -167,11 +177,10 @@ begin
       CriaLabel('Continuar Assistindo');
       for item in list do
       begin
-        CriaImagem(item.GetId);
+        CriaImagem();
       end;
       encerraImg;
     end;
-
 
   dinamiza(2);
   dinamiza(3);
@@ -181,8 +190,26 @@ begin
 end;
 
 
+procedure TF_HomePage.LimpaTela;
+var
+i:integer;
+begin
+  for i := Scroll.ComponentCount-1 downto 0 do
+  begin
+    if Scroll.Components[i] is TImage then
+      (Scroll.Components[i] as TImage).Free
+    else if  Scroll.Components[i] is TLabel then
+      (Scroll.Components[i] as TLabel).Free
+    else if Scroll.Components[i] is TPanel then
+      (Scroll.Components[i] as TPanel).Free
+  end;
+  topo:=40;
 
-procedure TF_HomePage.CriaImagem(MediaID:string);
+end;
+
+
+
+procedure TF_HomePage.CriaImagem();
 begin
   colunaImg:=colunaImg+1;
   filme:=TImage.Create(Scroll);
@@ -232,7 +259,7 @@ begin
     CriaLabel('Lançamentos desse ano');
     for item in list do
     begin
-      CriaImagem(item.GetId);
+      CriaImagem();
     end;
     encerraImg;
 
@@ -246,7 +273,7 @@ begin
     CriaLabel('Populares no CineShow');
     for item in list do
     begin
-      CriaImagem(item.GetId);
+      CriaImagem();
     end;
     encerraImg;
 
@@ -302,6 +329,7 @@ begin
 
       imgs:=TImage.Create(scroll);
       imgs.Parent:=scroll;
+       imgs.HelpKeyword:=HelpKeyword;
       imgs.Width:=95;
       imgs.Height:=25;
       imgs.Picture.LoadFromFile(dm.templates+'btn_saiba.png');
@@ -322,6 +350,7 @@ begin
   dm.FilmeOption:=TMedia.create((sender as TImage).HelpKeyword);
   self.hide;
   application.CreateForm(TF_Player,F_Player);
+  limpaTela;
   F_Player.showModal;
 
 end;
