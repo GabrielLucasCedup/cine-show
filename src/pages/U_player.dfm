@@ -12,6 +12,7 @@ object F_player: TF_player
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnKeyUp = FormKeyUp

@@ -9,7 +9,8 @@ select * from midia;
 SELECT * FROM midia join generos on midia.genero_id = generos.id;
 SELECT nome_midia,dir_midia,dir_capa,duracao,data_lancamento,genero_id FROM MIDIA WHERE ID = 9;
 SELECT id FROM MIDIA WHERE YEAR(DATA_LANCAMENTO) = YEAR(CURDATE());
-
+SELECT * FROM MIDIA WHERE visualizacao >= (SELECT (visualizacao + 50) as views FROM MIDIA ORDER BY visualizacao DESC LIMIT 4,1) ORDER BY visualizacao DESC;
+SELECT visualizacao,(SELECT (visualizacao + 50) FROM MIDIA ORDER BY visualizacao DESC LIMIT 4,1) FROM MIDIA order by VISUALIZACAO DESC;
 
 /*          RETOMAR          */
 SELECT * FROM RETOMAR;

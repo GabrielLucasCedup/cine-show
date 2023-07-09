@@ -12,6 +12,7 @@ type
       FNome       : string;
       FDirMP4     : string;
       FDirCapa    : string;
+      FDescricao  : string;
       FDuracao    : string;
       FLancamento : string;
       FGeneroid   : string;
@@ -26,6 +27,7 @@ type
       procedure SetNome(arg:string);
       procedure SetMP4(arg:string);
       procedure SetCapa(arg:string);
+      procedure SetDescricao(arg:string);
       procedure SetDuracao(arg:string);
       procedure SetLancamento(arg:string);
       procedure SetGeneroId(arg:string);
@@ -34,6 +36,7 @@ type
       function GetNome:string;
       function GetMP4:string;
       function GetCapa:string;
+      function GetDescricao:string;
       function GetDuracao:string;
       function GetLancamento:string;
       function GetGeneroId:string;
@@ -49,11 +52,69 @@ uses U_dm;
 
 // *************** BASIC METHODS *****************************
 
+constructor TMedia.create(id: string);
+var
+i:integer;
+begin
+
+  FQuery:= TFDQuery.Create(dm);
+  FQuery.Connection:= dm.conexao;
+  FQuery.SQL.Text:= 'SELECT id FROM MIDIA';
+
+  if id <> 'null' then
+  begin
+    with FQuery do
+    begin
+      Active:=true;
+
+      SQL.Text:= 'SELECT nome_midia,dir_midia,dir_capa,descricao,duracao,' +
+      'data_lancamento,genero_id FROM MIDIA WHERE ID = :pesq';
+      parambyname('pesq').AsString:=id;
+
+      OPEN;
+      FIRST;
+      if not IsEmpty then
+      begin
+        FNome:=fieldByName('nome_midia').AsString;
+        FDirMP4:=fieldByName('dir_midia').AsString;
+        FDirCapa:=fieldByName('dir_capa').AsString;
+        Fdescricao:=fieldByName('descricao').AsString;
+        FDuracao:=fieldByName('duracao').AsString;
+        FLancamento:=fieldByName('data_lancamento').AsString;
+        FGeneroId:=fieldByName('genero_id').AsString;
+        FId:=id;
+      end;
+
+    end;
+  end;
+  Desactive;
+end;
+
+procedure TMedia.Desactive;
+begin
+  FQuery.SQL.Text:='SELECT id FROM MIDIA';
+  FQuery.Open;
+  FQuery.Active:=false;
+  FQuery.Close;
+end;
+
+destructor TMedia.destroy;
+begin
+  inherited;
+  FQuery.Free;
+end;
+
+
 //--------- SETTER ------------
 
 procedure TMedia.SetCapa(arg: string);
 begin
   FDirCapa := arg;
+end;
+
+procedure TMedia.SetDescricao(arg: string);
+begin
+  FDescricao := arg;
 end;
 
 procedure TMedia.SetDuracao(arg: string);
@@ -88,60 +149,15 @@ end;
 
 // --------- GETTER ----------------
 
-constructor TMedia.create(id: string);
-var
-i:integer;
-begin
-
-  FQuery:= TFDQuery.Create(dm);
-  FQuery.Connection:= dm.conexao;
-  FQuery.SQL.Text:= 'SELECT id FROM MIDIA';
-
-  if id <> 'null' then
-  begin
-    with FQuery do
-    begin
-      Active:=true;
-
-      SQL.Text:= 'SELECT nome_midia,dir_midia,dir_capa,duracao,' +
-      'data_lancamento,genero_id FROM MIDIA WHERE ID = :pesq';
-      parambyname('pesq').AsString:=id;
-
-      OPEN;
-      FIRST;
-      if not IsEmpty then
-      begin
-        FNome:=fieldByName('nome_midia').AsString;
-        FDirMP4:=fieldByName('dir_midia').AsString;
-        FDirCapa:=fieldByName('dir_capa').AsString;
-        FDuracao:=fieldByName('duracao').AsString;
-        FLancamento:=fieldByName('data_lancamento').AsString;
-        FGeneroId:=fieldByName('genero_id').AsString;
-        FId:=id;
-      end;
-
-    end;
-  end;
-  Desactive;
-end;
-
-procedure TMedia.Desactive;
-begin
-  FQuery.SQL.Text:='SELECT id FROM MIDIA';
-  FQuery.Open;
-  FQuery.Active:=false;
-  FQuery.Close;
-end;
-
-destructor TMedia.destroy;
-begin
-  inherited;
-  FQuery.Free;
-end;
 
 function TMedia.GetCapa: string;
 begin
    result:=FDirCapa;
+end;
+
+function TMedia.GetDescricao: string;
+begin
+    result:=FDescricao;
 end;
 
 function TMedia.GetDuracao: string;

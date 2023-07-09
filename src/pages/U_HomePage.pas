@@ -20,6 +20,8 @@ type
     procedure ScrollMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
     procedure ScrollMouseEnter(Sender: TObject);
+    procedure footerMouseEnter(Sender: TObject);
+    procedure menuMouseEnter(Sender: TObject);
   private
     { Private declarations }
 
@@ -151,17 +153,17 @@ begin
   Scroll.VertScrollBar.Position:=Scroll.VertScrollBar.ScrollPos - 30;
 end;
 
-procedure TF_HomePage.TerminaTela;
-var
-  EmptyPanel: TPanel;
+procedure TF_HomePage.footerMouseEnter(Sender: TObject);
 begin
-  EmptyPanel := TPanel.Create(Scroll);
-  EmptyPanel.Parent := Scroll;
-  EmptyPanel.top := topo-5;
-  EmptyPanel.Width:=scroll.Width-25;
-  EmptyPanel.Height := 0;
+  inherited;
+  self.ScrollMouseEnter(scroll)
 end;
 
+procedure TF_HomePage.menuMouseEnter(Sender: TObject);
+begin
+  inherited;
+  self.ScrollMouseEnter(scroll);
+end;
 
 
 
@@ -188,26 +190,6 @@ begin
   TerminaTela;
 
 end;
-
-
-procedure TF_HomePage.LimpaTela;
-var
-i:integer;
-begin
-  for i := Scroll.ComponentCount-1 downto 0 do
-  begin
-    if Scroll.Components[i] is TImage then
-      (Scroll.Components[i] as TImage).Free
-    else if  Scroll.Components[i] is TLabel then
-      (Scroll.Components[i] as TLabel).Free
-    else if Scroll.Components[i] is TPanel then
-      (Scroll.Components[i] as TPanel).Free
-  end;
-  topo:=40;
-
-end;
-
-
 
 procedure TF_HomePage.CriaImagem();
 begin
@@ -380,9 +362,38 @@ begin
   (sender as TImage).Picture.LoadFromFile(dm.templates+'btn_saiba.png');
 end;
 
+
 // ----------- FUNÇÕES EXTRAS -----------
 
 
+
+procedure TF_HomePage.LimpaTela;
+var
+i:integer;
+begin
+  for i := Scroll.ComponentCount-1 downto 0 do
+  begin
+    if Scroll.Components[i] is TImage then
+      (Scroll.Components[i] as TImage).Free
+    else if  Scroll.Components[i] is TLabel then
+      (Scroll.Components[i] as TLabel).Free
+    else if Scroll.Components[i] is TPanel then
+      (Scroll.Components[i] as TPanel).Free
+  end;
+  topo:=40;
+
+end;
+
+procedure TF_HomePage.TerminaTela;
+var
+  EmptyPanel: TPanel;
+begin
+  EmptyPanel := TPanel.Create(Scroll);
+  EmptyPanel.Parent := Scroll;
+  EmptyPanel.top := topo-5;
+  EmptyPanel.Width:=scroll.Width-25;
+  EmptyPanel.Height := 0;
+end;
 
 procedure TF_HomePage.adicionaTopo(IsImage:Boolean);
 begin

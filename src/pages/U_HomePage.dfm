@@ -11,6 +11,7 @@ object F_HomePage: TF_HomePage
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
@@ -612,6 +613,7 @@ object F_HomePage: TF_HomePage
       2D53DB4225BA8FF1A3C739B3F076BE8A2538F81FFC7FC84FF03FF88FE369FB06
       FF29F84FC1FFE0FF09B809FE07FF83FFE7C8FFF521D1F41680C3CFF7FE3FA299
       ABA40757F6370000000049454E44AE426082}
+    OnMouseEnter = menuMouseEnter
   end
   object footer: TImage
     Left = -1
@@ -755,6 +757,7 @@ object F_HomePage: TF_HomePage
       00002801120000000000009400090000000000004A8004000000000000254002
       0000000000801220010000000000400990000000000000A00448000000000000
       50027F076DEAF0BCB856F3A40000000049454E44AE426082}
+    OnMouseEnter = footerMouseEnter
   end
   object Scroll: TScrollBox
     Left = 0
