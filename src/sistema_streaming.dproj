@@ -138,6 +138,10 @@
             <Form>F_Out</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="pages\U_SaibaMais.pas">
+            <Form>F_SaibaMais</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

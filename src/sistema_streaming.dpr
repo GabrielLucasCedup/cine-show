@@ -9,12 +9,14 @@ uses
   U_HomePage in 'pages\U_HomePage.pas' {F_HomePage},
   U_MediaClass in 'common\U_MediaClass.pas',
   U_Load in 'pages\U_Load.pas' {F_Load},
-  U_Out in 'pages\U_Out.pas' {F_Out};
+  U_Out in 'pages\U_Out.pas' {F_Out},
+  U_SaibaMais in 'pages\U_SaibaMais.pas' {F_SaibaMais};
 
 {$R *.res}
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TF_SaibaMais, F_SaibaMais);
   Application.CreateForm(TF_Login, F_Login);
   Application.CreateForm(Tdm, dm);
   Application.Run;
