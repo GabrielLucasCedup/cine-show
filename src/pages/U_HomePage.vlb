@@ -1,7 +1,4 @@
-﻿[dm.QMedia]
-Coordinates=10,146,81,58
-
-[footer]
+﻿[footer]
 Coordinates=316,10,48,58
 
 [Scroll]
@@ -9,12 +6,6 @@ Coordinates=314,146,47,36
 
 [menu]
 Coordinates=10,78,46,58
-
-[dm.QRetomar]
-Coordinates=211,10,95,58
-
-[dm.QUser]
-Coordinates=231,146,73,58
 
 []
 Coordinates=77,10,57,58

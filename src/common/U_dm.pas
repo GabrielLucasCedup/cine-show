@@ -17,6 +17,7 @@ type
     QUser: TFDQuery;
     QMedia: TFDQuery;
     QRetomar: TFDQuery;
+    QFavorito: TFDQuery;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -45,6 +46,7 @@ type
     // SISTEMA
     var UserID:string;
     var UserExibe:string;
+    var podeRemember:boolean;
 
     //LOAD
     var LoadOption:integer;
@@ -54,6 +56,10 @@ type
 
     //PLAYER
     var FilmeOption:TMedia;
+    var FilmePos:integer;
+
+    //SAIBA MAIS
+    Var SaibaOption:boolean;
 
     // PATH
     var templates:string;
@@ -76,16 +82,28 @@ type
     function MediaFindByName(pesq:string):boolean;
     function MediaSelectRecentes:TObjectList<TMedia>;
     function MediaSelectPopulares:TObjectList<TMedia>;
+    function MediaSelectAll:TObjectList<TMedia>;
+    procedure MediaAddViews(midiaId:string);
 
     // tabela RETOMAR
     function RetomarCount:integer;
     function RetomarSelectAll:TObjectList<TMedia>;
     procedure RetomarAdd(MidiaId:String;tempo:Integer);
+    function RetomarFindById(MidiaId:string):boolean;
+    procedure RetomarDelete(MidiaId:String);
+    function RetomarGetTempo(MidiaId:String):integer;
 
     // tabela AUTOLOGIN
     procedure Remember;
     function IsRemember:boolean;
     procedure RememberDeleteByDisk(num_disk:STRING);
+
+    // tabela FAVORITO
+    procedure FavoritoAdd(midiaId:string);
+    procedure FavoritoDelete(midiaId:string);
+    function FavoritoFindById(midiaId:string):boolean;
+    function FavoritoSelectAll:TObjectList<TMedia>;
+    function FavoritoCount:integer;
 
     // EXTRAS
     function LockKey(isShow:boolean):string;
@@ -117,9 +135,107 @@ begin
   conexao.Params.Database:='sistema_cineshow';
   conexao.Params.username:='root';
   conexao.Params.password:='3307';
+  SaibaOption:=false;
+  PodeRemember:=true;
 end;
 
 
+
+procedure Tdm.FavoritoAdd(midiaId: string);
+begin
+  with QFavorito do
+  begin
+    active:=true;
+
+    SQL.Text:='Insert into favoritos values(default,:usuario ,:midia )';
+    ParamByName('usuario').AsString:=UserID;
+    ParamByName('midia').AsString:=midiaId;
+    execute;
+
+    SQL.Text:='select id from favoritos';
+    active:=false;
+    close;
+  end;
+end;
+
+function Tdm.FavoritoCount: integer;
+begin
+   with QFavorito do
+  begin
+    active:=true;
+    SQL.Text:='select count(id) from favoritos where usuario_id = :usuario';
+    ParamByName('usuario').AsString:=UserID;
+    OPEN;
+    result:= fields[0].AsInteger;
+
+    SQL.Text:='select id from favoritos';
+    active:=false;
+    close;
+  end;
+end;
+
+procedure Tdm.FavoritoDelete(midiaId: string);
+begin
+  with QFavorito do
+  begin
+    active:=true;
+
+    SQL.Text:='delete from favoritos where usuario_id = :usuario and midia_id = :midia';
+    ParamByName('usuario').AsString:=UserID;
+    ParamByName('midia').AsString:=midiaId;
+    execute;
+
+    SQL.Text:='select id from favoritos';
+    active:=false;
+    close;
+  end;
+end;
+
+function Tdm.FavoritoFindById(midiaId: string): boolean;
+begin
+   with QFavorito do
+  begin
+    active:=true;
+    SQL.Text:='select id from favoritos where usuario_id = :usuario and midia_id = :midia';
+    ParamByName('usuario').AsString:=UserID;
+    ParamByName('midia').AsString:=midiaId;
+    OPEN;
+    result:= not IsEmpty;
+
+    SQL.Text:='select id from favoritos';
+    active:=false;
+    close;
+  end;
+end;
+
+function Tdm.FavoritoSelectAll: TObjectList<TMedia>;
+var
+Olist:TObjectList<TMedia>;
+begin
+  Olist:= TObjectList<TMedia>.Create;
+  with QFavorito do
+  begin
+    Active:=true;
+
+    SQL.Text:= 'SELECT midia_id FROM FAVORITOS WHERE usuario_id = :pesq';
+    ParamByName('pesq').AsString:=UserID;
+    OPEN;
+    if not IsEmpty then
+    begin
+      First;
+      while not EOF do
+      begin
+        Olist.Add( TMedia.create( Fields[0].AsString ) );
+        Next;
+      end;
+    end;
+    result:=Olist;
+
+    SQL.Text:='select id from favoritos';
+    active:=false;
+    close;
+  end;
+end;
 
 // -------------- CONTAS -------------------------------------------------
 
@@ -167,8 +283,6 @@ begin
 
   UserDesactive;
 end;
-
-
 
 
 
@@ -318,6 +432,47 @@ begin
   result:=Olist;
 end;
 
+procedure Tdm.MediaAddViews(midiaId: string);
+begin
+   MediaActive;
+  with QMedia do
+  begin
+    SQL.Text:= 'UPDATE MIDIA SET VISUALIZACAO = VISUALIZACAO+1 WHERE ID = :pesq';
+    ParamByName('pesq').AsString:=midiaId;
+    execute;
+  end;
+  MediaDesactive;
+end;
+
+
+function Tdm.MediaSelectAll: TObjectList<TMedia>;
+var
+OList:TObjectList<TMedia>;
+begin
+  Olist:= TObjectList<TMedia>.Create;
+  MediaActive;
+  with QMedia do
+  begin
+    SQL.Text:= 'SELECT id FROM MIDIA';
+    OPEN;
+    if IsEmpty then
+    begin
+      Result:=Olist;
+      exit
+    end;
+
+    First;
+    while not EOF do
+    begin
+      Olist.Add(TMedia.create(fieldByName('id').AsString));
+      next;
+    end;
+
+  end;
+  MediaDesactive;
+  result:=Olist;
+end;
+
 function Tdm.MediaSelectPopulares: TObjectList<TMedia>;
 var
 OList:TObjectList<TMedia>;
@@ -382,6 +537,20 @@ begin
    QUser.Close;
 end;
 
+function Tdm.RetomarFindById(MidiaId: string): boolean;
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+    SQL.Text:= 'SELECT id FROM RETOMAR WHERE usuario_id = :usuarioId and midia_id = :midiaId';
+    ParamByName('usuarioId').AsString:=UserID;
+    ParamByName('midiaId').AsString:= midiaId;
+    OPEN;
+    result:=not IsEmpty;
+  end;
+  retomarDesactive;
+end;
+
 function Tdm.RetomarSelectAll: TObjectList<TMedia>;
 var
 Olist:TObjectList<TMedia>;
@@ -401,7 +570,6 @@ begin
         Olist.Add( TMedia.create( Fields[0].AsString ) );
         Next;
       end;
-      Showmessage(Olist[0].GetNome);
     end;
     result:=Olist;
   end;
@@ -413,14 +581,51 @@ begin
   RetomarActive;
   with QRetomar do
   begin
-    SQL.Text:= 'INSERT INTO RETOMAR VALUE(default,:atual,:data,:usuarioId,:midiaId)';
-    ParamByName('atual').AsInteger:=tempo;
-    ParamByName('data').AsDate:=Date;
-    ParamByName('usuarioId').AsString:=UserID;
-    ParamByName('midiaId').AsString:= midiaId;
-    Execute;
+    if not RetomarFindById(midiaId) then
+    begin
+      SQL.Text:= 'INSERT INTO RETOMAR VALUE(default,:atual,:data,:usuarioId,:midiaId)';
+      ParamByName('atual').AsInteger:=tempo;
+      ParamByName('data').AsDate:=Date;
+      ParamByName('usuarioId').AsString:=UserID;
+      ParamByName('midiaId').AsString:= midiaId;
+      Execute;
+    end else begin
+      SQL.Text:= 'UPDATE RETOMAR SET tempo_atual = :atual, ultimo_acesso = :data WHERE usuario_id = :usuarioId and midia_id = :midiaId';
+      ParamByName('atual').AsInteger:=tempo;
+      ParamByName('data').AsDate:=Date;
+      ParamByName('usuarioId').AsString:=UserID;
+      ParamByName('midiaId').AsString:= midiaId;
+      Execute;
+    end;
   end;
   RetomarDesactive;
+end;
+
+procedure Tdm.RetomarDelete(MidiaId: String);
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+    SQL.Text:= 'DELETE FROM RETOMAR WHERE usuario_id = :usuarioId and midia_id = :midiaId';
+    ParamByName('usuarioId').AsString:=UserID;
+    ParamByName('midiaId').AsString:= midiaId;
+    EXECUTE;
+  end;
+  retomarDesactive;
+end;
+
+function Tdm.RetomarGetTempo(MidiaId: String): integer;
+begin
+  RetomarActive;
+  with QRetomar do
+  begin
+    SQL.Text:= 'SELECT tempo_atual FROM RETOMAR WHERE usuario_id = :usuarioId and midia_id = :midiaId';
+    ParamByName('usuarioId').AsString:=UserID;
+    ParamByName('midiaId').AsString:= midiaId;
+    OPEN;
+    result:= fields[0].AsInteger;
+  end;
+  retomarDesactive;
 end;
 
 

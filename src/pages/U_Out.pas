@@ -30,7 +30,6 @@ type
 var
   F_Out: TF_Out;
 
-
 implementation
 
 {$R *.dfm}
@@ -39,6 +38,7 @@ uses U_dm, U_HomePage, U_player;
 
 procedure TF_Out.btnNClick(Sender: TObject);
 begin
+ F_player.FAction:=1;
  Close;
 end;
 
@@ -55,13 +55,20 @@ end;
 procedure TF_Out.btnSClick(Sender: TObject);
 begin
   if dm.OutOption = 1 then
+  begin
     Halt
-  else
+  end else
   if dm.OutOption = 2 then
   begin
+    self.Hide;
     F_Player.Close;
     F_HomePage.show;
     Close;
+  end else
+  if dm.OutOption = 3 then
+  begin
+    F_player.finalize;
+    halt
   end;
 end;
 
@@ -83,7 +90,7 @@ begin
     desc.Caption:='Deseja sair do CineShow?';
 
   end else
-  if dm.OutOption = 2 then
+  if dm.OutOption >= 2 then
   begin
 
     desc.Caption:='Voltar para a Tela Principal?';

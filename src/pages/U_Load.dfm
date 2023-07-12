@@ -117,7 +117,7 @@ object F_Load: TF_Load
       0000000049454E44AE426082}
   end
   object timer: TTimer
-    Interval = 10
+    Interval = 70
     OnTimer = timerTimer
     Left = 24
     Top = 32

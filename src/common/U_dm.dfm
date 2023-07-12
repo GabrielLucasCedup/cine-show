@@ -39,4 +39,11 @@ object dm: Tdm
     Left = 320
     Top = 312
   end
+  object QFavorito: TFDQuery
+    Connection = conexao
+    SQL.Strings = (
+      'select id from favoritos')
+    Left = 320
+    Top = 384
+  end
 end

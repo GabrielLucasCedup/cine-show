@@ -3,12 +3,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, U_BaseForm, Vcl.Imaging.jpeg,
-  Vcl.ExtCtrls, Vcl.OleCtrls, WMPLib_TLB, Vcl.StdCtrls, Vcl.Imaging.pngimage;
+  Vcl.ExtCtrls, Vcl.OleCtrls, WMPLib_TLB, Vcl.StdCtrls, Vcl.Imaging.pngimage,
+  U_SaibaMais, Vcl.ComCtrls;
 type
   TF_player = class(TBaseForm)
     MediaPlayer: TWindowsMediaPlayer;
     timer: TTimer;
     painel: TPanel;
+    mediaTimer: TTimer;
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure timerTimer(Sender: TObject);
@@ -28,21 +30,30 @@ type
     procedure hidePlayerControls;
     procedure PlayAction(IsHover:boolean;imgs:TImage);
     function getPlayerControls(nome:string):TImage;
+    procedure mediaTimerTimer(Sender: TObject);
+    procedure MediaPlayerPositionChange(ASender: TObject; oldPosition,
+      newPosition: Double);
+    function formatTempo(tempo:string):string;
 
 
   private
     { Private declarations }
   public
     { Public declarations }
+    FAction: integer;
+    procedure finalize;
   end;
 var
   F_player: TF_player;
-  j:integer=0;
+  j:integer;
+  lb_atual,lb_total:tlabel;
+  barra:TProgressBar;
   IsPause:boolean=true;
   IsFull:boolean=true;
   IsMute:boolean=false;
+  IsLove:boolean;
   player:IWMPCore;
-  FAction: integer;
+
 
 implementation
 {$R *.dfm}
@@ -53,12 +64,14 @@ uses U_dm, U_Out;
 procedure TF_player.FormActivate(Sender: TObject);
 begin
     inherited;
+    self.Caption:='CineShow - '+dm.FilmeOption.GetNome;
     mediaplayer.URL:= dm.media + dm.FilmeOption.getMP4;
     player:=mediaplayer.ControlInterface;
     timer.Enabled:=true;
     FAction:=1;
+    j:=0;
 
-    painel.Caption:=dm.FilmeOption.GetNome;
+    painel.Caption:='';
     Constraints.MaxHeight :=  0;
     Constraints.MinHeight := 574;
     Constraints.MaxWidth := 0;
@@ -72,19 +85,63 @@ begin
     mediaplayer.Height:=clientHeight;
     borderIcons:=[biSystemMenu,biMinimize];
     mediaplayer.left:=0;
+    IsLove:=dm.FavoritoFindById(dm.FilmeOption.GetId);
     playercontrols;
+    if dm.SaibaOption then
+    begin
+      dm.SaibaOption:=false;
+      F_SaibaMais.VAction:=2;
+      F_saibaMais.close;
+    end;
 end;
+function TF_player.formatTempo(tempo: string): string;
+var
+i:integer;
+sub:string;
+begin
+
+  sub:='';
+  if tempo.Length = 8 then
+  begin
+    tempo:=inttostr(strtoint( copy(tempo,4,2)+copy(tempo,7,2) )-1);
+    sub:='0'+copy(tempo,1,1)+':'+copy(tempo,2,2);
+  end else begin
+    i:=strtoint(tempo);
+    if i > 59 then
+    begin
+      tempo:=inttostr(i div 60);
+      if (i mod 60)<10 then
+      tempo:=tempo+'0'+inttostr(i mod 60);
+      tempo:=tempo+inttostr(i mod 60);
+      sub:='0'+copy(tempo,1,1)+':'+copy(tempo,2,2);
+    end else
+    if tempo.Length = 2 then
+    begin
+      sub:='00:'+copy(tempo,1,2);
+    end else
+    if tempo.Length = 1 then
+    begin
+      sub:='00:0'+copy(tempo,1,1);
+    end;
+
+  end;
+  result:=sub;
+end;
+
 procedure TF_player.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
+  if player.playState = wmppsPlaying then
+  PlayAction(false,getPlayerControls('FPlay'));
   if FAction = 1 then
   begin
-    dm.OutOption:=1;
+    dm.OutOption:=3;
     Action:=TCloseAction.caNone;
     Application.CreateForm(TF_Out,F_Out);
     F_Out.ShowModal;
-  end else
+  end else begin
     Action:=TCloseAction.caFree;
+  end;
 
 end;
 
@@ -158,21 +215,36 @@ begin
   end else
   if imgs.Name = 'FVoltar' then
   begin
+    if player.playState = wmppsPlaying then
+    PlayAction(false,getPlayerControls('FPlay'));
     dm.OutOption:=2;
     FAction:=2;
     Application.CreateForm(TF_Out,F_Out);
     F_Out.ShowModal;
+  end else
+  if imgs.Name = 'Ffavorito' then
+  begin
+    if IsLove then
+    begin
+      IsLove:=false;
+      dm.FavoritoDelete(dm.FilmeOption.GetId);
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end else begin
+      IsLove:=true;
+      dm.FavoritoAdd(dm.FilmeOption.GetId);
+      imgs.Picture.LoadFromFile(dm.templates+imageChange(IsHover,imgs));
+    end;
   end;
-
 end;
 
 procedure TF_player.PlayerControls;
 var
 imgs:TImage;
+titulo:tlabel;
 Fleft,FRight:integer;
 begin
   painel.Width:=clientwidth;
-  painel.Height:=60;
+  painel.Height:=75;
   painel.Align:=alBottom;
 
   FRight:=painel.Width-60;
@@ -183,7 +255,7 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=37;
   imgs.Height:=37;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FRight;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
@@ -198,7 +270,7 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=32;
   imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FRight;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
@@ -206,6 +278,7 @@ begin
   imgs.OnMouseLeave:=EventPlayLeave;
 
   FRight:=FRight-60;
+
   //voltar
   imgs:=TImage.Create(Painel);
   imgs.Parent:=painel;
@@ -213,7 +286,7 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=32;
   imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FRight;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
@@ -228,7 +301,7 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=32;
   imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FLeft;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
@@ -243,7 +316,7 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=32;
   imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FLeft;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
@@ -258,13 +331,64 @@ begin
   imgs.Stretch:=true;
   imgs.Width:=32;
   imgs.Height:=32;
-  imgs.Top:=(painel.Height div 2)-(imgs.Height div 2);
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
   imgs.Left:=FLeft;
   imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
   imgs.OnClick:=EventPlayClick;
   imgs.OnMouseEnter:=EventPlayEnter;
   imgs.OnMouseLeave:=EventPlayLeave;
 
+  FLeft:=FLeft+60;
+  //favoritos
+  imgs:=TImage.Create(Painel);
+  imgs.Parent:=painel;
+  imgs.Name:='Ffavorito';
+  imgs.Stretch:=true;
+  imgs.Width:=32;
+  imgs.Height:=32;
+  imgs.Top:=((painel.Height+15) div 2)-(imgs.Height div 2);
+  imgs.Left:=FLeft;
+  imgs.Picture.LoadFromFile(dm.templates+imageChange(false,imgs));
+  imgs.OnClick:=EventPlayClick;
+  imgs.OnMouseEnter:=EventPlayEnter;
+  imgs.OnMouseLeave:=EventPlayLeave;
+
+  //Barra de progresso
+  barra:=TProgressBar.Create(painel);
+  barra.parent:=painel;
+  barra.Width:=painel.Width-(painel.Width div 10);
+  barra.Height:=15;
+  barra.Top:=0;
+  barra.Left:=(painel.Width div 2)-(barra.Width div 2);
+
+  //tempo total
+  lb_total:=tlabel.Create(painel);
+  lb_total.parent:=painel;
+  lb_total.font.Color:=clWhite;
+  lb_total.Font.Name:='Tahoma';
+  lb_total.Font.Size:=11;
+  lb_total.Top:=0;
+  lb_total.left:=barra.Left+barra.Width+5;
+
+  //tempo atual
+   lb_atual:=tlabel.Create(painel);
+  lb_atual.parent:=painel;
+  lb_atual.font.Color:=clWhite;
+  lb_atual.Font.Name:='Tahoma';
+  lb_atual.Font.Size:=11;
+  lb_atual.caption:='00:00';
+  lb_atual.Top:=0;
+  lb_atual.left:=barra.Left-(lb_atual.Width+5);
+
+  // titulo
+  titulo:=TLabel.Create(painel);
+  titulo.Parent:=painel;
+  titulo.Caption:=dm.FilmeOption.GetNome;
+  titulo.font.Color:=clWhite;
+  titulo.Font.Name:='Tahoma';
+  titulo.Font.Size:=16;
+  titulo.Top:=((painel.Height+15) div 2)-(titulo.Height div 2);
+  titulo.Left:=(painel.Width div 2)-(titulo.Width div 2);
 
 end;
 
@@ -281,10 +405,18 @@ end;
 procedure TF_player.timerTimer(Sender: TObject);
 begin
   inherited;
-  if player.playState = wmppsPlaying then
+  if j = 0 then
   begin
-    j:=j+1;
+    lb_total.Caption:=formatTempo(dm.FilmeOption.GetDuracao);
+    barra.max:=trunc(player.currentMedia.duration - 1);
+    if dm.RetomarFindById(dm.FilmeOption.GetId) then
+    begin
+        player.controls.currentPosition:=dm.RetomarGetTempo(dm.FilmeOption.GetId);
+    end;
   end;
+  lb_atual.Caption:=formatTempo(inttostr(trunc(player.controls.currentPosition)));
+  barra.Position:=trunc(player.controls.currentPosition);
+  j:=j+1;;
 end;
 
 //---------------------------  EVENTOS  --------------------------------------
@@ -300,6 +432,7 @@ end;
 
 procedure TF_player.EventPlayEnter(sender: TObject);
 begin
+
   (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(true,sender as TImage));
 end;
 
@@ -308,6 +441,22 @@ end;
 procedure TF_player.EventPlayLeave(sender: TObject);
 begin
   (sender as TImage).Picture.LoadFromFile(dm.templates+imageChange(false,sender as TImage));
+end;
+
+procedure TF_player.finalize;
+begin
+    if player.controls.currentPosition > (player.currentMedia.duration * 0.91) then
+    begin  //TERMINOU
+      if dm.RetomarFindById(dm.FilmeOption.GetId) then
+      begin
+        dm.RetomarDelete(dm.FilmeOption.GetId);
+        dm.MediaAddViews(dm.FilmeOption.GetId);
+      end;
+    end else  //NAO TERMINOU
+    if j > 30 then
+    begin
+        dm.RetomarAdd(dm.FilmeOption.GetId,trunc(player.controls.currentPosition));
+    end;
 end;
 
 //-------------------------- TROCA IMAGENS ----------------------------------------
@@ -362,7 +511,7 @@ begin
         result:='painelPlayer\normalScreen.png';
     end;
   end else
-  if imgs.Name = 'FVolume' then
+  if imgs.Name = 'FVolume' then         //VOLUME
   begin
     if IsMute then
     begin
@@ -377,14 +526,49 @@ begin
         result:='painelPlayer\volume.png';
     end;
   end else
-  if imgs.Name = 'FVoltar' then
+  if imgs.Name = 'FVoltar' then         //VOLTAR
   begin
     if IsHover then
          result:='painelPlayer\hover\voltar.png'
         else
           result:='painelPlayer\voltar.png';
+  end else
+  if imgs.name = 'Ffavorito' then
+  begin
+    if IsLove then
+    begin
+      if IsHover then
+         result:='painelPlayer\hover\love.png'
+        else
+          result:='painelPlayer\love.png';
+    end else begin
+      if IsHover then
+        result:='painelPlayer\hover\favorite.png'
+      else
+        result:='painelPlayer\favorite.png';
+    end;
   end;
 
+end;
+
+procedure TF_player.MediaPlayerPositionChange(ASender: TObject; oldPosition,
+  newPosition: Double);
+begin
+  inherited;
+  {if (newPosition >= player.currentMedia.duration)or((newPosition = 0)and(oldPosition > (player.currentMedia.duration * 0.8))) then
+  begin
+    newPosition:=player.currentMedia.duration;
+  end;  }
+
+end;
+
+procedure TF_player.mediaTimerTimer(Sender: TObject);
+begin
+  inherited;
+  if player.controls.currentPosition >= (player.currentMedia.duration-0.3) then
+  begin
+    player.controls.currentPosition:= player.currentMedia.duration-0.3;
+  end;
 end;
 
 procedure TF_player.FormKeyUp(Sender: TObject; var Key: Word;

@@ -76,9 +76,12 @@ end;
 procedure TF_Login.FormActivate(Sender: TObject);
 begin
   inherited;
-  if dm.IsRemember then
+  if dm.PodeRemember then
   begin
-    Timer1.Enabled:=true;
+    if dm.IsRemember then
+    begin
+      Timer1.Enabled:=true;
+    end;
   end;
 end;
 

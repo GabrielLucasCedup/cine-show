@@ -60,6 +60,9 @@ begin
   CLIENTHEIGHT:=300;
   CLIENTWIDTH:=400;
 
+  j:=0;
+  i:=2;
+
   loader.height:=55;
   loader.Width:=55;
   loader.left:=(width div 2)-(loader.Width div 2);

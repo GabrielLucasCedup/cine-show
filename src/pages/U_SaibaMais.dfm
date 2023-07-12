@@ -1,7 +1,7 @@
 object F_SaibaMais: TF_SaibaMais
   Left = 0
   Top = 0
-  Caption = 'F_SaibaMais'
+  Caption = 'saiba'
   ClientHeight = 404
   ClientWidth = 635
   Color = clBtnFace
@@ -12,6 +12,7 @@ object F_SaibaMais: TF_SaibaMais
   Font.Style = []
   OldCreateOrder = False
   OnActivate = FormActivate
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
 end

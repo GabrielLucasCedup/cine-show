@@ -12,6 +12,8 @@ type
     Scroll: TScrollBox;
     menu: TImage;
     footer: TImage;
+    sair: TImage;
+    home: TImage;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -22,6 +24,9 @@ type
     procedure ScrollMouseEnter(Sender: TObject);
     procedure footerMouseEnter(Sender: TObject);
     procedure menuMouseEnter(Sender: TObject);
+    procedure sairMouseEnter(Sender: TObject);
+    procedure sairMouseLeave(Sender: TObject);
+    procedure sairClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -49,7 +54,7 @@ type
   public
     { Public declarations }
     procedure CriaLabel(texto:string);
-    procedure CriaImagem();
+    procedure CriaImagem(t:integer=0);
   end;
 
 var
@@ -61,12 +66,13 @@ var
   item:TMedia;
   margin:integer=18;
   IsEnter:boolean=true;
+  IsCreate:boolean=true;
 
 implementation
 
 {$R *.dfm}
 
-uses U_dm, U_Out, U_Login, U_player;
+uses U_dm, U_Out, U_Login, U_player, U_SaibaMais;
 
 
 procedure TF_HomePage.FormActivate(Sender: TObject);
@@ -74,8 +80,11 @@ begin
   inherited;
 // ----------- MONTANDO TELA -------------
 
-  CriaTela;
-
+  if IsCreate then
+  begin
+    CriaTela;
+    IsCreate:=false;
+  end;
 end;
 
 procedure TF_HomePage.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -133,7 +142,6 @@ begin
   for i in ListRM do
   begin
     scroll.Components[i].Free;
-
   end;
 
   ListRM.Free;
@@ -167,6 +175,27 @@ end;
 
 
 
+procedure TF_HomePage.sairClick(Sender: TObject);
+begin
+  inherited;
+  topo:=40;
+  IsCreate:=true;
+  dm.poderemember:=false;
+  change(TF_Login,F_Login);
+end;
+
+procedure TF_HomePage.sairMouseEnter(Sender: TObject);
+begin
+  inherited;
+  sair.Picture.LoadFromFile(dm.hover+'btn_sair.png');
+end;
+
+procedure TF_HomePage.sairMouseLeave(Sender: TObject);
+begin
+  inherited;
+   sair.Picture.LoadFromFile(dm.templates+'btn_sair.png');
+end;
+
 // ----------- FUNÇÕES DE CRIAÇÃO ------
 
 procedure TF_HomePage.CriaTela;
@@ -179,19 +208,21 @@ begin
       CriaLabel('Continuar Assistindo');
       for item in list do
       begin
-        CriaImagem();
+        CriaImagem(dm.RetomarGetTempo(item.GetId));
       end;
       encerraImg;
     end;
 
+  dinamiza(1);
   dinamiza(2);
   dinamiza(3);
+  dinamiza(4);
 
   TerminaTela;
 
 end;
 
-procedure TF_HomePage.CriaImagem();
+procedure TF_HomePage.CriaImagem(t:integer=0);
 begin
   colunaImg:=colunaImg+1;
   filme:=TImage.Create(Scroll);
@@ -232,6 +263,18 @@ begin
   if n = 1 then
   begin
      //favoritos
+
+    if dm.FavoritoCount > 0 then
+    begin
+      List := dm.FavoritoSelectAll;
+      CriaLabel('Favoritos');
+      for item in list do
+      begin
+        CriaImagem();
+      end;
+      encerraImg;
+    end;
+
   end else
   if n = 2 then
   begin //lancamentos desse ano
@@ -264,14 +307,22 @@ begin
   end else
   if n = 4 then
   begin
-    //nostalgia
+
+    List := dm.MediaSelectAll;
+    CriaLabel('Disponíveis');
+    for item in list do
+    begin
+      CriaImagem();
+    end;
+    encerraImg;
+
   end;
 
 end;
 
 procedure TF_HomePage.encerraImg;
 begin
-  if colunaImg > 0 then
+  if colunaImg >= 0 then
   begin
     adicionaTopo(true);
     colunaImg:=-1;
@@ -297,6 +348,7 @@ begin
       imgs:=TImage.Create(scroll);
       imgs.Parent:=scroll;
       imgs.HelpKeyword:=HelpKeyword;
+     // imgs.HelpContext:= HelpContext;
       imgs.Width:=60;
       imgs.Height:=60;
       imgs.Picture.LoadFromFile(dm.templates+'btn_player.png');
@@ -311,7 +363,8 @@ begin
 
       imgs:=TImage.Create(scroll);
       imgs.Parent:=scroll;
-       imgs.HelpKeyword:=HelpKeyword;
+      imgs.HelpKeyword:=HelpKeyword;
+     // imgs.HelpContext:= HelpContext;
       imgs.Width:=95;
       imgs.Height:=25;
       imgs.Picture.LoadFromFile(dm.templates+'btn_saiba.png');
@@ -331,6 +384,7 @@ procedure TF_HomePage.EventPlayerClick(sender: TObject);
 begin
   dm.FilmeOption:=TMedia.create((sender as TImage).HelpKeyword);
   self.hide;
+  IsCreate:=true;
   application.CreateForm(TF_Player,F_Player);
   limpaTela;
   F_Player.showModal;
@@ -349,7 +403,12 @@ end;
 
 procedure TF_HomePage.EventSaibaClick(sender: TObject);
 begin
-  Showmessage((sender as TImage).GetNamePath);
+  dm.FilmeOption:=TMedia.create((sender as TImage).HelpKeyword);
+  self.hide;
+  IsCreate:=true;
+  application.CreateForm(TF_SaibaMais,F_SaibaMais);
+  limpaTela;
+  F_SaibaMais.showModal;
 end;
 
 procedure TF_HomePage.EventSaibaEnter(sender: TObject);
